@@ -1,0 +1,78 @@
+:root {
+  color-scheme: light;
+  --paper: #f7f5ef;
+  --ink: #27382e;
+  --muted: #6d786d;
+  --line: #d9ded4;
+  --accent: #718b6c;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+.site-shell { max-width: 1080px; min-height: 100vh; margin: auto; padding: 0 48px; display: flex; flex-direction: column; }
+.site-header { height: 104px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+.brand { font-family: Georgia, "Times New Roman", serif; font-size: 26px; font-weight: 600; letter-spacing: -.03em; text-decoration: none; }
+.brand span { color: var(--accent); }
+nav { display: flex; gap: 34px; }
+nav a { font-size: 14px; text-decoration: none; color: var(--muted); }
+nav a:hover, .text-link:hover, .post-card a:hover { color: var(--accent); }
+main { flex: 1; }
+.hero { padding: 112px 0 118px; max-width: 800px; }
+.eyebrow { margin: 0 0 25px; color: var(--accent); font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.hero h1, .article h1 { margin: 0; font-family: Georgia, "Noto Serif SC", "SimSun", serif; font-weight: 400; letter-spacing: -.045em; line-height: 1.25; }
+.hero h1 { font-size: clamp(48px, 7vw, 78px); }
+.hero-copy { margin: 28px 0 31px; color: var(--muted); font-size: 18px; line-height: 1.8; }
+.text-link, .back-link { color: var(--ink); font-size: 14px; text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 6px; }
+.text-link span { margin-left: 8px; }
+.post-section { border-top: 1px solid var(--line); padding: 56px 0 110px; }
+.section-heading .eyebrow { margin-bottom: 10px; }
+.section-heading h2 { margin: 0 0 35px; font: 400 32px Georgia, "Noto Serif SC", "SimSun", serif; }
+.post-list { border-top: 1px solid var(--line); }
+.post-card { display: grid; grid-template-columns: 175px 1fr 30px; align-items: center; gap: 20px; padding: 27px 0; border-bottom: 1px solid var(--line); }
+.post-card time { font-size: 13px; color: var(--muted); letter-spacing: .03em; }
+.post-card h2, .post-card h3 { margin: 0; font: 400 24px Georgia, "Noto Serif SC", "SimSun", serif; }
+.post-card a { text-decoration: none; }
+.post-arrow { color: var(--accent); font-size: 21px; }
+.empty-note { color: var(--muted); }
+.article { max-width: 760px; margin: 0 auto; padding: 74px 0 130px; }
+.back-link { display: inline-block; margin-bottom: 78px; color: var(--muted); border: 0; }
+.article-header { padding-bottom: 45px; border-bottom: 1px solid var(--line); }
+.article-header .eyebrow { margin-bottom: 18px; }
+.article h1 { font-size: clamp(42px, 5vw, 62px); }
+.prose { padding-top: 35px; font-size: 17px; line-height: 2; }
+.prose h2, .prose h3 { font-family: Georgia, "Noto Serif SC", "SimSun", serif; font-weight: 400; line-height: 1.4; }
+.prose h2 { margin-top: 2.2em; font-size: 28px; }
+.prose p, .prose ul, .prose ol, .prose blockquote { margin: 0 0 1.4em; }
+.prose a { text-decoration-color: var(--accent); text-underline-offset: 4px; }
+.prose img { max-width: 100%; height: auto; }
+.prose blockquote { margin-left: 0; padding-left: 25px; border-left: 2px solid var(--accent); color: var(--muted); }
+.prose pre { overflow-x: auto; padding: 22px; background: #e9ece4; font-size: 14px; line-height: 1.6; }
+.prose code { overflow-wrap: anywhere; }
+.archive-page > .eyebrow { margin-bottom: 14px; }
+.archive-page h1 { margin-bottom: 55px; }
+.site-footer { display: flex; justify-content: space-between; gap: 16px; padding: 26px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+@media (max-width: 700px) {
+  .site-shell { padding: 0 24px; }
+  .site-header { height: auto; min-height: 104px; padding: 23px 0 17px; flex-direction: column; align-items: flex-start; gap: 18px; }
+  .brand { font-size: 21px; }
+  nav { width: 100%; gap: 26px; }
+  nav a { font-size: 13px; }
+  .hero { padding: 90px 0 100px; }
+  .hero-copy { font-size: 16px; }
+  .post-card { grid-template-columns: 1fr 24px; gap: 8px; }
+  .post-card time { grid-column: 1 / -1; }
+  .post-card h2, .post-card h3 { font-size: 21px; }
+  .article { padding-top: 52px; }
+  .back-link { margin-bottom: 55px; }
+  .site-footer { display: block; line-height: 2; }
+  .site-footer span { display: block; }
+}
