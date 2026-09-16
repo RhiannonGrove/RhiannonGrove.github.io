@@ -16,6 +16,15 @@ npm.cmd run server
 
 浏览器打开 <http://localhost:4000>。按 `Ctrl+C` 停止预览。以后只需进入已克隆的目录，运行 `npm.cmd run server`。
 
+往后在电脑上编辑时，打开powershell，运行：
+
+```powershell
+cd "$env:USERPROFILE\Documents\RhiannonGrove.github.io"
+npm.cmd run server
+```
+
+即可开启预览。
+
 ## 写文章
 
 运行 `npx.cmd hexo new "文章标题"`，然后编辑 `source/_posts/` 中生成的 Markdown 文件。`source/about/index.md` 是“关于”页面。
