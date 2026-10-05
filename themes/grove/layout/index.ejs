@@ -5,6 +5,28 @@
   <a class="text-link" href="<%- url_for('/about/') %>">认识这个小站 <span aria-hidden="true">↗</span></a>
 </section>
 
+<section class="tag-section" id="tags" aria-labelledby="tags-title">
+  <div class="section-heading tag-heading">
+    <div>
+      <p class="eyebrow">Topics</p>
+      <h2 id="tags-title">分类标签</h2>
+    </div>
+    <p class="section-note">选择一个标签，查看相关内容。</p>
+  </div>
+  <% if (site.tags && site.tags.length) { %>
+    <div class="tag-cloud">
+      <% site.tags.sort('name').each(function(tag) { %>
+        <a class="tag-chip" href="<%- url_for(tag.path) %>">
+          <span># <%= tag.name %></span>
+          <em><%= tag.length %> 篇</em>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p class="empty-note">标签即将到来。</p>
+  <% } %>
+</section>
+
 <section class="post-section" aria-labelledby="latest-title">
   <div class="section-heading">
     <p class="eyebrow">Journal</p>
