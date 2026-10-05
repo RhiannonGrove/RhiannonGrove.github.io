@@ -1,5 +1,5 @@
 ---
-title: 文章标题
+title: Pre_MIPS
 date: 2026-10-05 17:40:00
 tags:
  - 计组
