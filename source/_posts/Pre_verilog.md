@@ -1,3 +1,11 @@
+---
+title: Pre_verilog
+date:2026-10-05 17:30:00
+tags:
+ - 随笔
+ - 阅读
+---
+
 # 分段饱和加法
 
 > 题目标识：`Pre_sat_add`
