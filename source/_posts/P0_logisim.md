@@ -1,3 +1,10 @@
+---
+title:P0_logisim
+date:2026-10-05 17:00:00
+tags:
+ - 计组
+---
+
 # 环城导航
 
 > 题目标识：`Pre_ring_distance`
@@ -26,7 +33,7 @@
 
 环上站点编号按顺时针方向递增，站点 `15` 的下一站为 `0`。当顺时针距离与逆时针距离相等且起点与终点不同时，距离为 `8`。
 
-![环形站点与方向约定](assets/ring-navigation.png)
+![环形站点与方向约定](/images/P0/ring-navigation.png)
 
 ## 4 示例
 
@@ -51,5 +58,5 @@ result = 6'b10_0100;
 3. 模块外观必须与下图一致，否则可能造成评测错误。
 4. 输入端口 `pos[7:0]` 和输出端口 `result[5:0]` 的名称、方向、位宽及上下顺序必须与信号定义一致。
 
-![main 模块外观](assets/module-appearance.png)
+![main 模块外观](/images/P0/assets/module-appearance.png)
 
