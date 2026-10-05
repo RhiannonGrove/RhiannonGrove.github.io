@@ -1,6 +1,6 @@
 ---
-title:P0_logisim
-date:2026-10-05 17:00:00
+title: P0_logisim
+date: 2026-10-05 17:00:00
 tags:
  - 计组
 ---
