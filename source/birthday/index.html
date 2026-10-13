@@ -1,0 +1,100 @@
+---
+layout: false
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ff8fc7">
+  <title>生日快乐呀！</title>
+  <style>
+    :root { --pink:#ff79b8; --yellow:#fff17b; --ink:#71385f; }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; min-height:100vh; overflow-x:hidden; color:var(--ink);
+      font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+      background: linear-gradient(145deg,#ffd9ed 0%,#fff2bd 48%,#d9f8ff 100%);
+    }
+    body::before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.32;
+      background-image:radial-gradient(#fff 1.5px,transparent 1.5px); background-size:25px 25px; }
+    .page { position:relative; width:min(900px,94vw); margin:0 auto; padding:30px 0 55px; text-align:center; }
+    .ticker { overflow:hidden; white-space:nowrap; color:#ff4fa4; font-size:14px; font-weight:900; text-shadow:1px 1px white; }
+    .ticker span { display:inline-block; padding-left:100%; animation:marquee 18s linear infinite; }
+    @keyframes marquee { to { transform:translateX(-100%); } }
+    .sticker { display:inline-block; margin:20px 0 5px; padding:8px 16px; border:2px dashed #ff82bb; border-radius:999px; background:#fff9; transform:rotate(-3deg); font-weight:900; }
+    h1 { margin:8px 0 0; font-size:clamp(46px,10vw,94px); line-height:1.1; letter-spacing:.04em;
+      color:#ff4f9a; -webkit-text-stroke:2px #fff; text-shadow:4px 5px 0 #ffbd38, 7px 8px 0 #fff8; animation:wobble 2.8s ease-in-out infinite; }
+    @keyframes wobble { 0%,100% { transform:rotate(-2deg) scale(1); } 50% { transform:rotate(2deg) scale(1.035); } }
+    .subtitle { margin:20px 0 18px; font-size:clamp(20px,4vw,30px); font-weight:1000; color:#9a4b92; text-shadow:2px 2px white; }
+    .cake { position:relative; width:210px; margin:0 auto 19px; font-size:105px; line-height:1.2; filter:drop-shadow(0 7px 0 #f3a9cc); animation:bounce 1.8s ease-in-out infinite; }
+    @keyframes bounce { 50% { transform:translateY(-9px) rotate(3deg); } }
+    .card { width:min(620px,94%); margin:0 auto; padding:24px 22px; background:#ffffffd9; border:3px solid white; border-radius:28px; box-shadow:0 9px 0 #f4a4cf, 0 14px 28px #a64d8230; }
+    .card p { margin:7px 0; font-size:clamp(16px,3vw,20px); line-height:1.8; }
+    .highlight { color:#f05299; font-weight:1000; }
+    .button { margin:23px 0 10px; padding:14px 25px; border:0; border-radius:999px; color:#74345f; background:linear-gradient(#fff38a,#ffc2df); box-shadow:0 6px 0 #ee84b5; font:900 18px inherit; font-family:inherit; font-size:18px; font-weight:1000; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+    .button:hover { transform:translateY(-3px) rotate(-1deg); box-shadow:0 9px 0 #ee84b5; }
+    .button:active { transform:translateY(3px); box-shadow:0 3px 0 #ee84b5; }
+    #message { min-height:30px; margin:9px auto 0; font-weight:900; color:#e94f98; }
+    .tiny { margin-top:24px; font-size:13px; opacity:.8; }
+    .float { position:fixed; bottom:-60px; z-index:0; pointer-events:none; animation:up 8s linear forwards; }
+    @keyframes up { to { transform:translateY(-115vh) rotate(24deg); opacity:0; } }
+    .spark { position:fixed; z-index:5; pointer-events:none; animation:pop .8s ease-out forwards; }
+    @keyframes pop { to { transform:translate(var(--x),var(--y)) scale(.2) rotate(150deg); opacity:0; } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="ticker"><span>★ 今日份宇宙大事件：寿星闪亮登场！ ★ 请大家把祝福排好队！ ★ 蛋糕正在赶来的路上！ ★</span></div>
+    <div class="sticker">✧ 重要通知 · 请查收 ✧</div>
+    <h1>生日快乐！</h1>
+    <div class="subtitle">亲爱的寿星，今天你最大！</div>
+    <div class="cake" aria-label="生日蛋糕">🎂</div>
+    <section class="card">
+      <p>恭喜你成功解锁 <span class="highlight">新的一岁</span>！</p>
+      <p>愿你每天都有好吃的、好玩的，</p>
+      <p>烦恼自动退退退，快乐加倍再加倍！</p>
+      <p>今天的你：<span class="highlight">可爱值爆表，寿星光环已开启 ✨</span></p>
+      <button class="button" id="wishButton" type="button">点我领取今日寿星特权 🎁</button>
+      <div id="message" aria-live="polite"></div>
+    </section>
+    <div class="tiny">温馨提示：寿星今天可以理直气壮地多吃一块蛋糕 🍰</div>
+  </main>
+  <script>
+    const wishes = [
+      '特权到账：今天许的愿，宇宙已经偷偷记下啦！🌠',
+      '特权到账：烦恼请排队，快乐寿星优先！💖',
+      '特权到账：今日可爱额度不限量，请放心使用！🐣',
+      '特权到账：蛋糕热量今天自动转换成幸福值！🍰'
+    ];
+    const button = document.getElementById('wishButton');
+    const message = document.getElementById('message');
+    button.addEventListener('click', (event) => {
+      message.textContent = wishes[Math.floor(Math.random() * wishes.length)];
+      burst(event.clientX || innerWidth / 2, event.clientY || innerHeight / 2);
+      for (let i = 0; i < 5; i++) setTimeout(addFloat, i * 120);
+    });
+    function burst(x, y) {
+      const icons = ['✨','💖','🎉','⭐','🌸','💛'];
+      for (let i = 0; i < 24; i++) {
+        const item = document.createElement('span');
+        item.className = 'spark'; item.textContent = icons[Math.floor(Math.random() * icons.length)];
+        item.style.left = x + 'px'; item.style.top = y + 'px';
+        item.style.setProperty('--x', (Math.random() * 300 - 150) + 'px');
+        item.style.setProperty('--y', (Math.random() * 260 - 130) + 'px');
+        document.body.appendChild(item); setTimeout(() => item.remove(), 850);
+      }
+    }
+    function addFloat() {
+      const item = document.createElement('span'); item.className = 'float';
+      item.textContent = ['🎈','🌟','💝','🎊'][Math.floor(Math.random() * 4)];
+      item.style.left = Math.random() * 95 + 'vw'; item.style.fontSize = (24 + Math.random() * 24) + 'px';
+      item.style.animationDuration = (6 + Math.random() * 4) + 's';
+      document.body.appendChild(item); setTimeout(() => item.remove(), 10500);
+    }
+    for (let i = 0; i < 7; i++) setTimeout(addFloat, i * 500);
+  </script>
+</body>
+</html>
+
