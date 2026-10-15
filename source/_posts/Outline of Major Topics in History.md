@@ -13,6 +13,8 @@ tags:
 
 （~~主要是一堆垃圾放在电脑里占内存~~）
 
+[简单版在这里](https://rhiannongrove.github.io/2026/10/15/Short%20Answer%20Question%20Handbook/)
+
 ## 1. 反侵略战争失败的根本原因和教训是什么？
 
 ### 一、原因
