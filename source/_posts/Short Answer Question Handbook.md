@@ -9,7 +9,7 @@ tags:
 
 （~~话说我每次打`前言`都会打成`前沿`~~)
 
-本手册诞生原因是背诵18道题目太痛苦了，故缩减为较短版[这里是原文]([https://example.com](https://rhiannongrove.github.io/2026/10/15/Outline%20of%20Major%20Topics%20in%20History/))。
+本手册诞生原因是背诵18道题目太痛苦了，故缩减为较短版[这里是原文]([https://example.com]https://rhiannongrove.github.io/2026/10/15/Outline%20of%20Major%20Topics%20in%20History/)。
 
 话不多说，双手奉上。
 
