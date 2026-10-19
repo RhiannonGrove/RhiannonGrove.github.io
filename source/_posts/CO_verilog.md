@@ -1,6 +1,6 @@
 ---
-title:verilog语法初步
-date:2026-10-19 22:25:00
+title: verilog语法初步
+date: 2026-10-19 22:25:00
 tags:
  - 计组
 ---
