@@ -27,22 +27,71 @@
   <% } %>
 </section>
 
-<section class="post-section" aria-labelledby="latest-title">
-  <div class="section-heading">
-    <p class="eyebrow">Journal</p>
-    <h2 id="latest-title">近期文章</h2>
-  </div>
-  <% if (page.posts.length) { %>
-    <div class="post-list">
-      <% page.posts.each(function(post) { %>
-        <article class="post-card">
-          <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY · MM · DD') %></time>
-          <h3><a href="<%- url_for(post.path) %>"><%= post.title %></a></h3>
-          <span class="post-arrow" aria-hidden="true">↗</span>
-        </article>
-      <% }) %>
+<%
+  const archiveMonths = [];
+  const archiveMonthMap = {};
+  const chineseMonths = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+
+  site.posts.sort('-date').each(function(post) {
+    const year = date(post.date, 'YYYY');
+    const month = date(post.date, 'MM');
+    const key = year + '-' + month;
+
+    if (!archiveMonthMap[key]) {
+      archiveMonthMap[key] = {
+        year: year,
+        month: month,
+        label: chineseMonths[Number(month) - 1] + ' ' + year,
+        count: 0
+      };
+      archiveMonths.push(archiveMonthMap[key]);
+    }
+
+    archiveMonthMap[key].count += 1;
+  });
+%>
+
+<div class="home-content">
+  <section class="post-section" aria-labelledby="latest-title">
+    <div class="section-heading">
+      <p class="eyebrow">Journal</p>
+      <h2 id="latest-title">近期文章</h2>
     </div>
-  <% } else { %>
-    <p class="empty-note">文章即将到来。</p>
-  <% } %>
-</section>
+    <% if (page.posts.length) { %>
+      <div class="post-list">
+        <% page.posts.each(function(post) { %>
+          <article class="post-card">
+            <time datetime="<%= date(post.date, 'YYYY-MM-DD') %>"><%= date(post.date, 'YYYY · MM · DD') %></time>
+            <h3><a href="<%- url_for(post.path) %>"><%= post.title %></a></h3>
+            <span class="post-arrow" aria-hidden="true">↗</span>
+          </article>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="empty-note">文章即将到来。</p>
+    <% } %>
+  </section>
+
+  <aside class="home-sidebar" aria-label="文章归档">
+    <section class="archive-widget">
+      <h2 class="archive-widget-title">
+        <a href="<%- url_for('/archives/') %>"><span aria-hidden="true">▣</span> 归档</a>
+      </h2>
+      <% if (archiveMonths.length) { %>
+        <ul class="archive-month-list">
+          <% archiveMonths.forEach(function(item) { %>
+            <li>
+              <a href="<%- url_for('/archives/' + item.year + '/' + item.month + '/') %>">
+                <span><%= item.label %></span>
+                <em><%= item.count %></em>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p class="empty-note">暂无归档。</p>
+      <% } %>
+    </section>
+  </aside>
+</div>
+
