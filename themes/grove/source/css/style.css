@@ -167,6 +167,27 @@ main { flex: 1; }
 .article-header { padding-bottom: 31px; border-bottom: 1px solid var(--line); }
 .article-header .eyebrow { margin-bottom: 18px; }
 .article h1 { font-size: clamp(34px, 4vw, 48px); }
+.article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 15px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: .01em;
+}
+.article-meta-item { display: inline-flex; align-items: center; gap: 5px; }
+.article-meta svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.article-meta-divider { color: rgba(116, 121, 134, .55); }
 .article-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
 .article-tag {
   padding: 5px 10px;
@@ -373,6 +394,7 @@ main { flex: 1; }
   .reading-layout .article { margin: 0; }
   .back-link { margin-bottom: 34px; }
   .article h1 { font-size: 32px; }
+  .article-meta { gap: 6px; font-size: 11.5px; }
   .prose { padding-top: 25px; font-size: 14.5px; line-height: 1.72; }
   .prose h2 { font-size: 21px; }
   .prose figure.highlight table { font-size: 12px; }
