@@ -187,12 +187,142 @@ main { flex: 1; }
 .prose img { display: block; max-width: 100%; height: auto; margin: 1.5em auto; border-radius: 14px; box-shadow: 0 10px 28px rgba(49, 56, 85, .12); }
 .prose blockquote { margin-left: 0; padding: 10px 0 10px 20px; border-left: 3px solid var(--accent-soft); color: var(--muted); background: rgba(113, 126, 184, .06); }
 .prose hr { margin: 2em 0; border: 0; border-top: 1px solid var(--line); }
-.prose pre { overflow-x: auto; padding: 18px; background: rgba(72, 79, 105, .08); border-radius: 12px; font-size: 13px; line-height: 1.6; }
+.prose pre {
+  overflow-x: auto;
+  margin: 1.35em 0;
+  padding: 18px;
+  color: #d4d4d4;
+  background: #1e1e1e;
+  border-radius: 12px;
+  font: 13px/1.65 "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  tab-size: 4;
+}
 .prose code { overflow-wrap: anywhere; }
 .prose :not(pre) > code { padding: .12em .38em; color: #b04f62; background: rgba(176, 79, 98, .08); border-radius: 5px; }
 .prose table { width: 100%; margin: 1.2em 0; border-collapse: collapse; font-size: 14px; }
 .prose th, .prose td { padding: 9px 11px; border: 1px solid var(--line); text-align: left; }
 .prose th { background: rgba(104, 116, 172, .08); }
+
+/* VS Code-inspired syntax highlighting for Hexo highlight.js output. */
+.prose figure.highlight {
+  position: relative;
+  overflow-x: auto;
+  margin: 1.35em 0;
+  padding-top: 32px;
+  color: #d4d4d4;
+  background: #1e1e1e;
+  border: 1px solid #303033;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(22, 24, 32, .18);
+}
+.prose figure.highlight::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  padding: 0 14px;
+  color: #9da0a8;
+  background: #252526;
+  border-bottom: 1px solid #333337;
+  content: "CODE";
+  font: 600 10px/32px "Cascadia Code", Consolas, monospace;
+  letter-spacing: .12em;
+}
+.prose figure.highlight.c::before { content: "C"; }
+.prose figure.highlight.cpp::before { content: "C++"; }
+.prose figure.highlight.verilog::before,
+.prose figure.highlight.systemverilog::before { content: "VERILOG"; }
+.prose figure.highlight table {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: collapse;
+  color: inherit;
+  background: transparent;
+  font-size: 13px;
+}
+.prose figure.highlight td {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+}
+.prose figure.highlight pre {
+  overflow: visible;
+  margin: 0;
+  padding: 16px 18px;
+  color: inherit;
+  background: transparent;
+  border-radius: 0;
+  white-space: pre;
+}
+.prose figure.highlight .gutter {
+  width: 1%;
+  color: #858585;
+  background: #252526;
+  border-right: 1px solid #333337;
+  user-select: none;
+}
+.prose figure.highlight .gutter pre { padding-right: 12px; padding-left: 12px; text-align: right; }
+.prose figure.highlight .code pre { padding-left: 16px; }
+.prose figure.highlight .line { min-height: 1.65em; }
+.prose figure.highlight .comment,
+.prose figure.highlight .quote { color: #6a9955; font-style: italic; }
+.prose figure.highlight .keyword,
+.prose figure.highlight .type,
+.prose figure.highlight .selector-tag { color: #f44747; }
+.prose figure.highlight .built_in,
+.prose figure.highlight .class .title { color: #4ec9b0; }
+.prose figure.highlight .title,
+.prose figure.highlight .title.function_ { color: #dcdcaa; }
+.prose figure.highlight .string,
+.prose figure.highlight .regexp,
+.prose figure.highlight .addition { color: #ce9178; }
+.prose figure.highlight .number,
+.prose figure.highlight .literal { color: #b5cea8; }
+.prose figure.highlight .variable,
+.prose figure.highlight .attr,
+.prose figure.highlight .attribute,
+.prose figure.highlight .params { color: #9cdcfe; }
+.prose figure.highlight .meta,
+.prose figure.highlight .meta .keyword,
+.prose figure.highlight .symbol { color: #c586c0; }
+.prose figure.highlight .subst { color: #d4d4d4; }
+
+/* Long code blocks are collapsed by code-blocks.js. */
+.code-collapse { position: relative; margin: 1.35em 0; }
+.code-collapse > figure.highlight,
+.code-collapse > pre { margin: 0; border-radius: 12px 12px 0 0; transition: max-height .25s ease; }
+.code-collapse.is-collapsed > figure.highlight,
+.code-collapse.is-collapsed > pre { max-height: 390px; overflow: hidden; }
+.code-collapse.is-collapsed::after {
+  position: absolute;
+  right: 0;
+  bottom: 39px;
+  left: 0;
+  height: 82px;
+  background: linear-gradient(to bottom, rgba(30, 30, 30, 0), #1e1e1e);
+  content: "";
+  pointer-events: none;
+}
+.code-toggle {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 40px;
+  color: #c8c8c8;
+  background: #252526;
+  border: 1px solid #36363a;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+  font: 12px "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+.code-toggle:hover { color: #fff; background: #2d2d30; }
+.code-toggle:focus-visible { outline: 2px solid #569cd6; outline-offset: 2px; }
 .article-toc { position: sticky; top: 102px; }
 .toc-card {
   max-height: calc(100vh - 128px);
@@ -245,6 +375,10 @@ main { flex: 1; }
   .article h1 { font-size: 32px; }
   .prose { padding-top: 25px; font-size: 14.5px; line-height: 1.72; }
   .prose h2 { font-size: 21px; }
+  .prose figure.highlight table { font-size: 12px; }
+  .code-collapse.is-collapsed > figure.highlight,
+  .code-collapse.is-collapsed > pre { max-height: 320px; }
   .site-footer { display: block; line-height: 2; }
   .site-footer span { display: block; }
 }
+
