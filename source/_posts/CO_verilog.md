@@ -21,7 +21,7 @@ tags:
 
   `module`是verilog中的基本组织单位，可以理解为“一个带输入输出接口的电路”。
 
-  ```
+  ```verilog
   module and_gate(
     input wire a,
     input wire b,
@@ -39,7 +39,7 @@ tags:
   除了需要的输入输出信号之外，我们通常还需要中间变量，因此我们需要声明一些变量or常量。那么我们先来说明一下`wire`和`reg`两种如何进行声明。
   
   在logisim的学习中，我们已经知道一个信号在声明时一定要加上其位宽，在verilog中也是一样的：
-  ```
+  ```verilog
 wire [7:0] a;
 reg [7:0] b;
   ```
@@ -49,12 +49,12 @@ reg [7:0] b;
   那么需要注意的是两者的赋值方式。
 
   `wire`型变量用`assign`进行赋值，例如：
-  ```
+  ```verilog
 wire a;
 assign a = 1'b0;
 ```
   而`reg`型变量则需要放到`always`、`initial`等模块中进行赋值，例如：
-  ```
+  ```verilog
 wire a;
 reg b;
 always @(*) begin
@@ -62,7 +62,7 @@ always @(*) begin
 end
   ```
   当然我们也能：
- ```
+ ```verilog
 assign flag = data[0];
 assign low = data[3:0];
 ```
