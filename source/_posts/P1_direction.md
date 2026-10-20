@@ -1,4 +1,9 @@
-# 后按方向优先
+---
+title: P1_direction_priority
+date: 2026-10-20 11:15:00
+tags:
+  - 计组
+---
 
 > 题目标识：`P1_direction_priority`
 
@@ -60,7 +65,7 @@
 
 ## 5 输入输出示例
 
-![输入输出波形示例](assets/example-waveform.png)
+![输入输出波形示例](images/P1/direction.png)
 
 波形对应的行为如下：
 
