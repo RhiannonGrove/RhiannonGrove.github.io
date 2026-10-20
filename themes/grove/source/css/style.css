@@ -83,7 +83,7 @@ body.image-background::before {
   mask-image: none;
 }
 .image-background .site-shell { position: relative; z-index: 1; }
-.image-background :is(.post-section, .archive-widget, .tag-widget, .article, .toc-card) {
+.image-background :is(.post-section, .archive-widget, .tag-widget, .site-info-widget, .article, .toc-card) {
   border-color: rgba(255, 255, 255, .38);
 }
 .image-background .toc-card { background: var(--glass); }
@@ -256,6 +256,7 @@ body.image-background::before {
   gap: 20px;
 }
 .archive-widget,
+.site-info-widget,
 .tag-widget {
   padding: 30px 24px 28px;
   background: var(--glass);
@@ -266,6 +267,12 @@ body.image-background::before {
   -webkit-backdrop-filter: blur(16px);
 }
 .tag-widget { scroll-margin-top: 98px; }
+.site-info-widget .sidebar-widget-title { display: flex; align-items: center; gap: 9px; }
+.site-info-icon { width: 21px; height: 21px; flex: 0 0 auto; color: var(--muted); }
+.site-info-list { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.site-info-list > div { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 8px 0; }
+.site-info-list dt { flex: 0 0 auto; }
+.site-info-list dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .sidebar-widget-title { margin: 0 0 22px; font: 400 21px Georgia, "Noto Serif SC", "SimSun", serif; }
 .sidebar-widget-title a { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
 .sidebar-widget-title a:hover { color: var(--accent); }
@@ -663,7 +670,7 @@ body.image-background::before {
   .home-content { display: block; }
   .home-content .post-section { margin-bottom: 22px; }
   .home-sidebar { position: static; margin-bottom: 70px; }
-  .archive-widget, .tag-widget { padding: 27px 21px 24px; border-radius: 20px; }
+  .archive-widget, .tag-widget, .site-info-widget { padding: 27px 21px 24px; border-radius: 20px; }
   .sidebar-widget-title { margin-bottom: 17px; }
   .sidebar-tag-list a,
   .archive-month-list a { padding: 8px 6px; }

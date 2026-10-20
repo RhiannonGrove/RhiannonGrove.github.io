@@ -47,3 +47,7 @@ git push
 
 博客使用自定义的 `themes/grove/` 主题。修改首页文字和导航可编辑 `themes/grove/layout/`，修改颜色和排版可编辑 `themes/grove/source/css/style.css`。
 
+首页侧边栏的“网站信息”会自动统计已发布文章数量、正文总字数（中文按字、英文按词，不含代码块），最后更新时间取最近一次 Git 提交时间。所有主题页面统一使用 `themes/grove/_config.yml` 中的 `home_cover.image` 作为背景。
+
+访客数（UV）和总浏览量（PV）使用[不蒜子](https://ibruce.info/2015/04/04/busuanzi/)统计，正式网站的首页、文章、归档、关于和标签页面都会计数，本地预览不计数。统计从接入后累计，不能还原此前的访问记录；服务不可用时显示“—”，悬停可查看提示。
+

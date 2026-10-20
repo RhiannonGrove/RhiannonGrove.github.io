@@ -99,6 +99,22 @@
         <p class="empty-note">暂无归档。</p>
       <% } %>
     </section>
+    <%
+      const siteInfo = grove_site_info();
+    %>
+    <section class="site-info-widget" aria-labelledby="site-info-title">
+      <h2 class="sidebar-widget-title" id="site-info-title">
+        <svg class="site-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v17h17M8 14l4-5 4 3 5-7"/></svg>
+        网站信息
+      </h2>
+      <dl class="site-info-list">
+        <div><dt>文章数目：</dt><dd><%= siteInfo.posts %></dd></div>
+        <div><dt>本站总字数：</dt><dd title="<%= siteInfo.words.toLocaleString('zh-CN') %> 字（不含代码块）"><%= siteInfo.wordLabel %></dd></div>
+        <div><dt>本站访客数：</dt><dd><span id="busuanzi_value_site_uv" title="访问统计加载中" aria-live="polite">—</span></dd></div>
+        <div><dt>本站总浏览量：</dt><dd><span id="busuanzi_value_site_pv" title="访问统计加载中" aria-live="polite">—</span></dd></div>
+        <div><dt>最后更新时间：</dt><dd><% if (siteInfo.updated) { %><time class="site-info-updated" datetime="<%= siteInfo.updated %>" title="<%= date(siteInfo.updated, 'YYYY-MM-DD HH:mm') %>"><%= date(siteInfo.updated, 'YYYY-MM-DD') %></time><% } else { %>—<% } %></dd></div>
+      </dl>
+    </section>
   </aside>
 </div>
 </div>
