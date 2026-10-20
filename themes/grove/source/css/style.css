@@ -366,6 +366,18 @@ main { flex: 1; }
 .prose figure.highlight .symbol { color: #c586c0; }
 .prose figure.highlight .subst { color: #d4d4d4; }
 
+/* Xilinx ISE-inspired Verilog palette: language keywords use blue. */
+.prose figure.highlight.verilog .keyword,
+.prose figure.highlight.verilog .type,
+.prose figure.highlight.verilog .meta,
+.prose figure.highlight.verilog .meta .keyword,
+.prose figure.highlight.verilog .symbol,
+.prose figure.highlight.systemverilog .keyword,
+.prose figure.highlight.systemverilog .type,
+.prose figure.highlight.systemverilog .meta,
+.prose figure.highlight.systemverilog .meta .keyword,
+.prose figure.highlight.systemverilog .symbol { color: #569cd6; }
+
 /* Long code blocks are collapsed by code-blocks.js. */
 .code-collapse { position: relative; margin: 1.35em 0; }
 .code-collapse > figure.highlight,
