@@ -1,11 +1,10 @@
 <%
   const homeCover = theme.home_cover || {};
-  const homeCoverImage = homeCover.image || '/images/home-cover.jpg';
   const homeCoverTitle = homeCover.title || 'RhiannonGrove';
   const homeCoverSubtitle = homeCover.subtitle || '在字里行间，慢慢生长。';
 %>
 
-<section class="home-cover" style="--home-cover-image: url('<%- url_for(homeCoverImage) %>');">
+<section class="home-cover">
   <div class="home-stars" aria-hidden="true"></div>
   <div class="home-cover-content">
     <h1><%= homeCoverTitle %></h1>
@@ -103,4 +102,3 @@
   </aside>
 </div>
 </div>
-

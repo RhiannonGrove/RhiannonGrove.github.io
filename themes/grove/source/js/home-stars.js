@@ -1,5 +1,39 @@
 (() => {
   const layer = document.querySelector('.home-stars');
+  const header = document.querySelector('.home-page .site-header');
+
+  if (header) {
+    let previousScrollY = Math.max(window.scrollY, 0);
+    let frameRequested = false;
+
+    const updateHeader = () => {
+      const currentScrollY = Math.max(window.scrollY, 0);
+      const atTop = currentScrollY < 32;
+      const difference = currentScrollY - previousScrollY;
+
+      header.classList.toggle('is-floating', !atTop);
+
+      if (atTop) {
+        header.classList.remove('is-hidden');
+      } else if (difference > 4) {
+        header.classList.add('is-hidden');
+      } else if (difference < -4) {
+        header.classList.remove('is-hidden');
+      }
+
+      previousScrollY = currentScrollY;
+      frameRequested = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (frameRequested) return;
+      frameRequested = true;
+      window.requestAnimationFrame(updateHeader);
+    }, { passive: true });
+
+    updateHeader();
+  }
+
   if (!layer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const particleCount = window.innerWidth <= 700 ? 42 : 92;
@@ -24,4 +58,3 @@
 
   layer.appendChild(fragment);
 })();
-
