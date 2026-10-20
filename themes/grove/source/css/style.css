@@ -97,10 +97,15 @@ main { flex: 1; }
   gap: 28px;
 }
 .home-content .post-section { min-width: 0; }
-.home-sidebar { min-width: 0; }
-.archive-widget {
+.home-sidebar {
   position: sticky;
   top: 98px;
+  display: grid;
+  min-width: 0;
+  gap: 20px;
+}
+.archive-widget,
+.tag-widget {
   padding: 30px 24px 28px;
   background: var(--glass);
   border: 1px solid rgba(255, 255, 255, .68);
@@ -109,12 +114,17 @@ main { flex: 1; }
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
-.archive-widget-title { margin: 0 0 22px; font: 400 21px Georgia, "Noto Serif SC", "SimSun", serif; }
-.archive-widget-title a { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
-.archive-widget-title a:hover { color: var(--accent); }
-.archive-widget-title span { color: var(--muted); font: 16px/1 Arial, sans-serif; }
+.tag-widget { scroll-margin-top: 98px; }
+.sidebar-widget-title { margin: 0 0 22px; font: 400 21px Georgia, "Noto Serif SC", "SimSun", serif; }
+.sidebar-widget-title a { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+.sidebar-widget-title a:hover { color: var(--accent); }
+.sidebar-widget-title > span,
+.sidebar-widget-title a > span { color: var(--muted); font: 16px/1 Arial, sans-serif; }
+.sidebar-tag-list { margin: 0; padding: 0; list-style: none; }
+.sidebar-tag-list li + li { margin-top: 5px; }
 .archive-month-list { margin: 0; padding: 0; list-style: none; }
 .archive-month-list li + li { margin-top: 5px; }
+.sidebar-tag-list a,
 .archive-month-list a {
   display: flex;
   justify-content: space-between;
@@ -126,11 +136,13 @@ main { flex: 1; }
   text-decoration: none;
   transition: color .18s ease, background .18s ease, transform .18s ease;
 }
+.sidebar-tag-list a:hover,
 .archive-month-list a:hover {
   color: var(--accent);
   background: rgba(102, 117, 185, .08);
   transform: translateX(2px);
 }
+.sidebar-tag-list em,
 .archive-month-list em { color: inherit; font-style: normal; font-variant-numeric: tabular-nums; }
 .tag-section {
   margin-bottom: 28px;
@@ -426,9 +438,10 @@ main { flex: 1; }
   .post-section { padding: 38px 24px 42px; border-radius: 20px; }
   .home-content { display: block; }
   .home-content .post-section { margin-bottom: 22px; }
-  .home-sidebar { margin-bottom: 70px; }
-  .archive-widget { position: static; padding: 27px 21px 24px; border-radius: 20px; }
-  .archive-widget-title { margin-bottom: 17px; }
+  .home-sidebar { position: static; margin-bottom: 70px; }
+  .archive-widget, .tag-widget { padding: 27px 21px 24px; border-radius: 20px; }
+  .sidebar-widget-title { margin-bottom: 17px; }
+  .sidebar-tag-list a,
   .archive-month-list a { padding: 8px 6px; }
   .tag-section { padding: 32px 24px 36px; border-radius: 20px; }
   .tag-heading { display: block; }
