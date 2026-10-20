@@ -1,4 +1,9 @@
-# 简易注释过滤器
+---
+title: P1_Q3
+date: 2026-10-20 11:23:00
+tags:
+  - 计组
+---
 
 > 题目标识：`P1_comment_filter`
 
@@ -78,7 +83,7 @@ count = N mod 256
 ab/*xy*/cd
 ```
 
-![输入输出波形示例](assets/example-waveform.png)
+![输入输出波形示例](images/P1/comment_filter.png)
 
 处理过程如下：
 
@@ -108,3 +113,86 @@ count = 4
 3. 必须使用 Moore 型状态机实现。
 4. 模块内不得包含 `$display` 等仿真输出语句，以免造成误判。
 
+
+## 6 思路
+1. 思路也比较简单……但是！但是！蠢蠢的Rhiannon被小小的Moore打败嘞😫
+2. 错误的点在于其实跟Q2是一样的，但是不知为何在上机时脑子抽风重定义一个新的reg，然后在下一个时钟周期`count <= cnt`了……导致count直接晚一个时钟周期🫠
+
+## 7 代码
+因为课上没通过，所以只能课下补了，因此可以把代码放出来（真的，我哭死）
+```verilog
+module comment_filter(
+    input clk,
+    input reset,
+    input [7:0] char,
+    output reg [7:0] count
+    );
+	 
+	reg [2:0] state;
+	
+	always @(posedge clk) begin	
+		if (reset == 1'b1) begin
+			count <= 8'h00;
+			state <= 3'b000;
+		end
+		else begin
+			case (state) 
+				3'b000:begin
+					if (char == 8'h2F) begin
+						state <= 3'b001;
+						count <= count + 1;
+					end
+					else begin
+						count <= count + 1;
+						state <= 3'b000;
+					end
+				end
+				3'b001:begin
+					if (char == 8'h2F) begin
+						state <= 3'b001;
+						count <= count + 1;
+					end
+					else if (char == 8'h2A) begin
+						state <= 3'b010;
+						count <= count - 1;
+					end
+					else begin
+						state <= 3'b000;
+						count <= count + 1;
+					end
+				end
+				3'b010:begin
+					if (char == 8'h2A) begin
+						state <= 3'b011;
+					end
+					else begin
+						state <= 3'b010;
+					end
+				end
+				3'b011:begin
+					if (char == 8'h2F) begin
+						state <= 3'b100;
+					end
+					else if (char == 8'h2A) begin
+						state <= 3'b011;
+					end
+					else begin
+						state <= 3'b010;
+					end
+				end
+				3'b100:begin
+					if (char == 8'h2F) begin
+						state <= 3'b001;
+						count <= count + 1;
+					end
+					else begin
+						state <= 3'b000;
+						count <= count + 1;
+					end
+				end
+			endcase
+		end
+	end
+
+endmodule
+```
