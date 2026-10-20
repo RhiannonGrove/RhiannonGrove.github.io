@@ -378,12 +378,56 @@ main { flex: 1; }
 .prose figure.highlight.systemverilog .meta .keyword,
 .prose figure.highlight.systemverilog .symbol { color: #569cd6; }
 
+/* Plain ```text blocks keep the original lightweight prose treatment. */
+.prose figure.highlight.text {
+  padding-top: 0;
+  color: var(--ink);
+  background: rgba(72, 79, 105, .08);
+  border: 0;
+  box-shadow: none;
+}
+.prose figure.highlight.text::before { display: none; }
+.prose figure.highlight.text .gutter { display: none; }
+.prose figure.highlight.text pre {
+  padding: 18px;
+  color: inherit;
+  background: transparent;
+  font: 13px/1.6 monospace;
+}
+
+/* Copy control for real code blocks. */
+.code-frame { position: relative; margin: 1.35em 0; }
+.code-frame > pre { margin: 0; }
+.code-copy {
+  position: absolute;
+  top: 5px;
+  right: 8px;
+  z-index: 3;
+  display: inline-flex;
+  height: 23px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: #b8bbc2;
+  background: #2d2d30;
+  border: 1px solid #414146;
+  border-radius: 6px;
+  cursor: pointer;
+  font: 11px/1 "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  transition: color .16s ease, background .16s ease, border-color .16s ease;
+}
+.code-copy:hover { color: #fff; background: #37373d; border-color: #55555c; }
+.code-copy.is-copied { color: #b5e6b5; border-color: rgba(110, 190, 110, .55); }
+.code-copy:focus-visible { outline: 2px solid #569cd6; outline-offset: 2px; }
+
 /* Long code blocks are collapsed by code-blocks.js. */
 .code-collapse { position: relative; margin: 1.35em 0; }
 .code-collapse > figure.highlight,
-.code-collapse > pre { margin: 0; border-radius: 12px 12px 0 0; transition: max-height .25s ease; }
+.code-collapse > pre,
+.code-collapse > .code-frame { margin: 0; border-radius: 12px 12px 0 0; transition: max-height .25s ease; }
 .code-collapse.is-collapsed > figure.highlight,
-.code-collapse.is-collapsed > pre { max-height: 390px; overflow: hidden; }
+.code-collapse.is-collapsed > pre,
+.code-collapse.is-collapsed > .code-frame { max-height: 390px; overflow: hidden; }
 .code-collapse.is-collapsed::after {
   position: absolute;
   right: 0;
@@ -472,7 +516,8 @@ main { flex: 1; }
   .prose h2 { font-size: 21px; }
   .prose figure.highlight table { font-size: 12px; }
   .code-collapse.is-collapsed > figure.highlight,
-  .code-collapse.is-collapsed > pre { max-height: 320px; }
+  .code-collapse.is-collapsed > pre,
+  .code-collapse.is-collapsed > .code-frame { max-height: 320px; }
   .site-footer { display: block; line-height: 2; }
   .site-footer span { display: block; }
 }
