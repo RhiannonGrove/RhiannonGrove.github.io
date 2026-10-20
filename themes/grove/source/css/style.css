@@ -63,11 +63,11 @@ nav { display: flex; gap: 28px; }
 nav a { font-size: 13px; text-decoration: none; color: var(--muted); }
 nav a:hover, .text-link:hover, .post-card a:hover { color: var(--accent); }
 main { flex: 1; }
-body.home-page {
+body.image-background {
   background-color: #081522;
   background-image: none;
 }
-body.home-page::before {
+body.image-background::before {
   display: block;
   position: fixed;
   inset: 0;
@@ -82,7 +82,8 @@ body.home-page::before {
   background-repeat: no-repeat;
   mask-image: none;
 }
-.home-page .site-shell { position: relative; z-index: 1; max-width: none; padding: 0; }
+.image-background .site-shell { position: relative; z-index: 1; }
+.home-page .site-shell { max-width: none; padding: 0; }
 .home-page .site-header {
   position: fixed;
   top: 0;
@@ -200,6 +201,8 @@ body.home-page::before {
   width: calc(100% - 64px);
   max-width: 1216px;
   margin: 0 auto;
+}
+.image-background .site-footer {
   color: rgba(255, 255, 255, .72);
   border-top-color: rgba(255, 255, 255, .2);
   text-shadow: 0 1px 8px rgba(0, 0, 0, .38);

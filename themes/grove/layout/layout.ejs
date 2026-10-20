@@ -1,6 +1,7 @@
 <%
   const configuredHomeCover = theme.home_cover || {};
   const configuredHomeCoverImage = configuredHomeCover.image || '/images/home-cover.jpg';
+  const hasImageBackground = is_home() || is_post();
 %>
 <!doctype html>
 <html lang="zh-CN">
@@ -9,11 +10,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<%= config.description %>">
   <title><%= page.title ? page.title + ' · ' + config.title : config.title %></title>
-  <link rel="stylesheet" href="<%- url_for('/css/style.css') %>?v=20261020-fixed-bg-nav">
+  <link rel="stylesheet" href="<%- url_for('/css/style.css') %>?v=20261020-article-bg">
   <script src="<%- url_for('/js/code-blocks.js') %>?v=20261020-text-copy" defer></script>
   <script src="<%- url_for('/js/home-stars.js') %>?v=20261020-fixed-bg-nav" defer></script>
 </head>
-<body class="<%= is_home() ? 'home-page' : '' %>"<% if (is_home()) { %> style="--home-cover-image: url('<%- url_for(configuredHomeCoverImage) %>');"<% } %>>
+<body class="<%= is_home() ? 'home-page image-background' : (hasImageBackground ? 'image-background' : '') %>"<% if (hasImageBackground) { %> style="--home-cover-image: url('<%- url_for(configuredHomeCoverImage) %>');"<% } %>>
   <div class="site-shell">
     <header class="site-header">
       <a class="brand" href="<%- url_for('/') %>">Rhiannon<span> Grove</span></a>
