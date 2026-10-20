@@ -1,8 +1,17 @@
-<section class="hero">
-  <p class="eyebrow">A quiet place for words</p>
-  <h1>在字里行间，慢慢生长。</h1>
-  <p class="hero-copy">收集阅读、思考与日常的片刻。</p>
-  <a class="text-link" href="<%- url_for('/about/') %>">认识这个小站 <span aria-hidden="true">↗</span></a>
+<%
+  const homeCover = theme.home_cover || {};
+  const homeCoverImage = homeCover.image || '/images/home-cover.jpg';
+  const homeCoverTitle = homeCover.title || 'RhiannonGrove';
+  const homeCoverSubtitle = homeCover.subtitle || '在字里行间，慢慢生长。';
+%>
+
+<section class="home-cover" style="--home-cover-image: url('<%- url_for(homeCoverImage) %>');">
+  <div class="home-stars" aria-hidden="true"></div>
+  <div class="home-cover-content">
+    <h1><%= homeCoverTitle %></h1>
+    <p><%= homeCoverSubtitle %></p>
+  </div>
+  <a class="home-scroll" href="#latest-title" aria-label="向下查看文章"><span aria-hidden="true">⌄</span></a>
 </section>
 
 <%
@@ -29,6 +38,7 @@
   });
 %>
 
+<div class="home-body">
 <div class="home-content">
   <section class="post-section" aria-labelledby="latest-title">
     <div class="section-heading">
@@ -91,5 +101,6 @@
       <% } %>
     </section>
   </aside>
+</div>
 </div>
 

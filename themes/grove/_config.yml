@@ -1,0 +1,13 @@
+# 首页封面设置
+#
+# 更换背景图：
+# 1. 把新图片上传到 source/images 文件夹。
+# 2. 把下面的 image 改为 /images/新文件名.jpg。
+#    如果直接替换 source/images/home-cover.jpg，则不用修改这里。
+#
+# 修改首页中央的小字：直接修改 subtitle 冒号后面的内容。
+home_cover:
+  image: /images/home-cover.jpg
+  title: RhiannonGrove
+  subtitle: 在字里行间，慢慢生长。
+
