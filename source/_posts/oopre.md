@@ -23,7 +23,7 @@ tags:
 
 那么我们就按照指导书的路线对知识进行梳理和总结。
 
-## 如何假装自己是个Java糕手
+## 一 如何假装自己是个Java糕手
 ### 1 从C语言的结构体出发
 假设你有一只，哦不，是多只宠物，它们每个个体都有名字和年龄，当你给它们过完生日后，它们会长大一岁。
 
@@ -387,6 +387,127 @@ public class Example {
 }
 ```
 
+## 二 如何在对象面前故作坚强
+这一部分我们会主要学习一下Java的基本类型、字符串、输入输出，以及怎样读取操作指令。
+学完这些，你将能够
+
+### 1 基本类型
+Java有八种基本类型：
+| 类型 | 含义 | 示例 |
+|---|---|---|
+| `byte` | 8 位有符号整数 | `byte x = 10;` |
+| `short` | 16 位有符号整数 | `short x = 100;` |
+| `int` | 32 位有符号整数 | `int age = 2;` |
+| `long` | 64 位有符号整数 | `long total = 3000000000L;` |
+| `float` | 32 位浮点数 | `float x = 1.5F;` |
+| `double` | 64 位浮点数 | `double price = 1.5;` |
+| `char` | 一个 UTF-16 代码单元 | `char grade = 'A';` |
+| `boolean` | 真或假 | `boolean alive = true;` |
+1. 与C不同的是，Java的这些类型有固定大小。例如，`int`固定为32位，`long`固定为64位。
+2. `long`常量后的`L`表示这是一个`long`类型的整数。
+3. 小数通常是`double`，所以写`float`常量时通常加`F`:
+```Java
+double first = 1.5;
+float second = 1.5F;
+```
+### 2 `boolean`使用守则
+C中你可能这样写：
+```C
+int alive = 1;
+
+if (alive) {
+    printf("alive\n");
+}
+```
+但是！attention！Java中我们需要使用专门的真假类型✪ ω ✪：
+```Java
+boolean alive = true;
+
+if (alive) {
+    System.out.println("alive");
+}
+```
+众所周知，`boolean`只有`true`和`false`两个值，在Java中，整数不能当作判断的条件：
+```Java
+int count = 3;
+
+if (count) { // 编译错误
+}
+```
+必须写出明确的判断：
+```Java
+if (count != 0) {
+    System.out.println("有物品");
+}
+```
+
+完成了`boolean`，剩下的就简单多了！ヾ(≧▽≦*)o
+
+`&&`、`||`、`!` 的基本用途与 C 一致，并且 `&&` 和 `||` 都有顺序：
+```Java
+if (pet != null && pet.getAge() > 2) {
+    System.out.println("年龄大于 2");
+}
+```
+如果 `pet == null`，左侧条件已经是假，右侧不会执行。
+
+### 3 整数除法与类型转换
+和C一样，两个整数相除会进行整数除法，结束向零截断：
+```Java
+System.out.println(5 / 2);   // 2
+System.out.println(-5 / 2);  // -2
+```
+即使结果最后放进`double`，也不会恢复已经丢失的小数。
+
+如果我们想要得到`2.5`，就需要使用传统浮点大法：
+```Java
+double first = 5.0 / 2;
+double second = (double) 5 / 2;
+```
+当然，强制转换写法与C相同：
+```Java
+double value = 3.9;
+int number = (int) value;
+
+System.out.println(number); // 3
+```
+注意！对于这种正常范围内的数，转换后会去掉小数部分，而非我们熟知的四舍五入。
+
+哦对！差点忘了(╹ڡ╹ )，几次作业中伤害计算部分用到了向上取整：
+```Java
+double value = 3.2;
+
+System.out.println((int) value);    // 3
+System.out.println(Math.ceil(value)); // 4.0
+```
+`Math.ceil` 表示向上取整，返回类型仍是 `double`。题目需要整数结果时，可以在范围允许的情况下写：
+```Java
+int damage = (int) Math.ceil(value);
+```
+
+OK！这一部分就完成啦！（怎么感觉重新学了一遍C语言◑﹏◐）
+
+
+### 4 先转换再计算
+我们之前提到：
+> 与C不同的是，Java的这些类型有固定大小。例如，`int`固定为32位，`long`固定为64位。
+
+因此，在Java中如果不注意可能会发生位溢出的情况！(ToT)/~~~
+
+看这段：
+```Java
+int a = 100000;
+int b = 100000;
+
+long result = a * b;
+```
+虽然 `result` 是 `long`，但 `a * b` 的两个操作数都是 `int`，乘法会先按 `int` 运算。正确结果超出 `int` 范围，因此会发生可怕的溢出！一旦出现这种情况，极有可能会发生呆呆坐在考试机前无助审代码(•_•)。
+
+因此，我们需要来一点强制爱😋！
+```Java
+long result = (long) a * b;
+```
+这样输出结果就是`10000000000`。
 
 
 
