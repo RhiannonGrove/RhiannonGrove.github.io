@@ -8,6 +8,6 @@
 # 修改首页中央的小字：直接修改 subtitle 冒号后面的内容。
 home_cover:
   image: /images/home-cover.jpg
-  title: RhiannonGrove
+  title: Rhiannon Grove
   subtitle: 在字里行间，慢慢生长。
 
