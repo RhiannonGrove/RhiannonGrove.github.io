@@ -7,7 +7,7 @@
 <section class="home-cover">
   <div class="home-stars" aria-hidden="true"></div>
   <div class="home-cover-content">
-    <h1><%= homeCoverTitle %></h1>
+    <h1><% homeCoverTitle.split(/(Grove)/).forEach(function(part) { %><% if (part === 'Grove') { %><span class="cover-title-accent"><%= part %></span><% } else { %><%= part %><% } %><% }); %></h1>
     <p><%= homeCoverSubtitle %></p>
   </div>
   <a class="home-scroll" href="#latest-title" aria-label="向下查看文章"><span aria-hidden="true"></span></a>

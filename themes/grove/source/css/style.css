@@ -106,7 +106,8 @@ body.image-background::before {
   transition: height .22s ease, color .22s ease, background .22s ease, box-shadow .22s ease, transform .28s ease;
 }
 .home-page .brand { color: #fff; text-shadow: 0 2px 14px rgba(0, 0, 0, .5); }
-.home-page .brand span { color: #d3e8ff; }
+.home-page .brand span,
+.home-cover-content .cover-title-accent { color: #d3e8ff; }
 .home-page nav a { color: rgba(255, 255, 255, .88); text-shadow: 0 2px 12px rgba(0, 0, 0, .52); }
 .home-page nav a:hover { color: #fff; }
 .home-page .site-header.is-floating {
