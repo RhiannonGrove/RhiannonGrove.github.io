@@ -83,6 +83,22 @@ body.image-background::before {
   mask-image: none;
 }
 .image-background .site-shell { position: relative; z-index: 1; }
+.site-background-video {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.site-background-video.is-playing { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .site-background-video { display: none; }
+}
 .image-background :is(.post-section, .archive-widget, .tag-widget, .site-info-widget, .article, .toc-card) {
   border-color: rgba(255, 255, 255, .38);
 }

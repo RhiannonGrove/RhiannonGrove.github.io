@@ -47,7 +47,28 @@ git push
 
 博客使用自定义的 `themes/grove/` 主题。修改首页文字和导航可编辑 `themes/grove/layout/`，修改颜色和排版可编辑 `themes/grove/source/css/style.css`。
 
-首页侧边栏的“网站信息”会自动统计已发布文章数量、正文总字数（中文按字、英文按词，不含代码块），最后更新时间取最近一次 Git 提交时间。所有主题页面统一使用 `themes/grove/_config.yml` 中的 `home_cover.image` 作为背景。
+首页侧边栏的“网站信息”会自动统计已发布文章数量、正文总字数（中文按字、英文按词，不含代码块），最后更新时间取最近一次 Git 提交时间。所有主题页面统一使用 `themes/grove/_config.yml` 中的 `home_cover` 背景设置。
 
 访客数（UV）和总浏览量（PV）使用[不蒜子](https://ibruce.info/2015/04/04/busuanzi/)统计，正式网站的首页、文章、归档、关于和标签页面都会计数，本地预览不计数。统计从接入后累计，不能还原此前的访问记录；服务不可用时显示“—”，悬停可查看提示。
 
+
+## 切换动态／静态背景
+
+编辑 `themes/grove/_config.yml` 中这一段：
+
+```yaml
+home_cover:
+  type: video                     # video：动态视频；image：静态图片
+  image: /images/home-cover.jpg    # 静态背景，也是视频无法播放时的备用图
+  video: /videos/home-cover.mp4    # MP4 动态背景
+  title: Rhiannon Grove
+  subtitle: 在字里行间，慢慢生长。
+```
+
+- 切回静态：只把 `type: video` 改为 `type: image`，无需删除视频路径。
+- 更换图片：上传图片至 `source/images/`，将 `image` 改为对应的网站路径，例如 `/images/new-background.jpg`。
+- 更换视频：上传 MP4 至 `source/videos/`，将 `video` 改为对应的网站路径，例如 `/videos/new-background.mp4`。建议使用压缩后的 H.264 MP4。
+- 图片和视频均可填写完整的 `https://` 地址。这里填写网站路径，不能使用桌面文件的 `C:\...` 路径。
+- 修改并提交到 `main` 后会自动发布；首页、文章、归档、标签和关于页一起切换。
+
+视频全屏铺满、静音循环播放，切到其他浏览器标签时暂停；无法加载或自动播放时显示备用图片。访客系统开启“减少动态效果”时使用静态图片且不加载视频。静态模式也不会下载视频。

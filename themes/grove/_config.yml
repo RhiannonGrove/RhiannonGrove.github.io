@@ -1,13 +1,16 @@
-# 首页封面设置
+# 全站背景与首页封面设置
 #
-# 更换背景图：
-# 1. 把新图片上传到 source/images 文件夹。
-# 2. 把下面的 image 改为 /images/新文件名.jpg。
-#    如果直接替换 source/images/home-cover.jpg，则不用修改这里。
+# type: video 为动态视频，image 为静态图片。切换后提交配置即可自动发布。
+# image: 静态背景路径，也是视频加载中、无法播放时的备用背景。
+# video: MP4 视频路径；只有 type 为 video 时才加载。
+# 图片放在 source/images/，视频放在 source/videos/，配置路径不写 source。
+# 两种路径均可使用完整的 https:// 外部地址。
 #
 # 修改首页中央的小字：直接修改 subtitle 冒号后面的内容。
 home_cover:
+  type: video
   image: /images/home-cover.jpg
+  video: /videos/home-cover.mp4
   title: Rhiannon Grove
   subtitle: 在字里行间，慢慢生长。
 
