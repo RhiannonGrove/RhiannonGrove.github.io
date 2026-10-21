@@ -1,23 +1,27 @@
 <%
   const configuredHomeCover = theme.home_cover || {};
   const configuredHomeCoverImage = configuredHomeCover.image || '/images/home-cover.jpg';
-  const hasVideoBackground = configuredHomeCover.type === 'video' && configuredHomeCover.video;
+  const hasBackgroundVideo = Boolean(configuredHomeCover.video);
+  const defaultBackgroundMode = configuredHomeCover.type === 'video' && hasBackgroundVideo ? 'video' : 'image';
 %>
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-visual-theme="original" data-background-default="<%= defaultBackgroundMode %>" data-background-mode="<%= defaultBackgroundMode %>" data-has-video="<%= hasBackgroundVideo %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<%= config.description %>">
   <title><%= page.title ? page.title + ' · ' + config.title : config.title %></title>
+  <script src="<%- url_for('/js/theme-preload.js') %>?v=20261021-appearance"></script>
   <link rel="stylesheet" href="<%- url_for('/css/style.css') %>?v=20261021-video-background">
-  <script src="<%- url_for('/js/background.js') %>?v=20261021-video-background" defer></script>
+  <link rel="stylesheet" href="<%- url_for('/css/visual-themes.css') %>?v=20261021-appearance">
+  <script src="<%- url_for('/js/theme-switcher.js') %>?v=20261021-appearance" defer></script>
+  <script src="<%- url_for('/js/background.js') %>?v=20261021-appearance" defer></script>
   <script src="<%- url_for('/js/code-blocks.js') %>?v=20261020-text-copy" defer></script>
   <script src="<%- url_for('/js/home-stars.js') %>?v=20261020-fixed-bg-nav" defer></script>
   <script src="<%- url_for('/js/site-info.js') %>?v=20261021-site-info" data-site-url="<%= config.url %>" defer></script>
 </head>
 <body class="<%= is_home() ? 'home-page image-background' : 'image-background' %>" style="--home-cover-image: url(<%= JSON.stringify(url_for(configuredHomeCoverImage)) %>);">
-  <% if (hasVideoBackground) { %>
+  <% if (hasBackgroundVideo) { %>
     <video class="site-background-video" data-src="<%= url_for(configuredHomeCover.video) %>" poster="<%= url_for(configuredHomeCoverImage) %>" autoplay muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback aria-hidden="true" tabindex="-1"></video>
   <% } %>
   <div class="site-shell">

@@ -72,3 +72,22 @@ home_cover:
 - 修改并提交到 `main` 后会自动发布；首页、文章、归档、标签和关于页一起切换。
 
 视频全屏铺满、静音循环播放，切到其他浏览器标签时暂停；无法加载或自动播放时显示备用图片。访客系统开启“减少动态效果”时使用静态图片且不加载视频。静态模式也不会下载视频。
+
+## 三套视觉主题与外观设置
+
+页面左下角的“外观”入口提供三套主题：Original（保留原有玻璃主题）、Morandi Light（莫兰迪浅色）和 Wangxiang Dark（万象深色）。首次访问仍使用 Original，不根据系统深浅色自动切换。主题切换不刷新页面，正文、导航和侧边栏的布局保持一致。
+
+同一面板可以独立选择“动态视频”或“静态图片”。主题与背景偏好分别保存在访客当前浏览器的 localStorage 中，刷新、页面跳转、重新访问和同源多标签页会保持同步。浏览器不允许存储时仍可切换，但会提示偏好无法保存。
+
+`home_cover.type`、`home_cover.image` 和 `home_cover.video` 仍是站点默认模式与资源路径的配置入口。首次访问使用配置中的背景模式；访客自行选择后以该浏览器的选择为准。视频路径留空时动态选项不可用，自动使用图片。减少动态效果、视频加载失败和自动播放受限时保留图片回退。
+
+外观面板支持 Tab、方向键、空格和 Escape；选中项有明确标记。独立生日页也会沿用所选配色，同时保留自身的布局、背景结构、祝福与动画交互。
+
+实现入口：
+
+- `themes/grove/source/css/style.css`：原有样式，保留不动。
+- `themes/grove/source/css/visual-themes.css`：两套新增主题的语义变量、组件配色和设置面板。文字、表面、边界、焦点、状态色、阴影和代码高亮均通过变量统一管理。
+- `themes/grove/source/js/theme-preload.js`：样式加载前读取并验证偏好，防止错误主题闪烁。
+- `themes/grove/source/js/theme-switcher.js`：切换控件、键盘与焦点处理、偏好保存及跨标签同步。
+- `themes/grove/source/js/background.js`：视频播放、静态切换、减少动态效果及图片回退。
+- `themes/grove/layout/layout.ejs` 与 `source/birthday/index.html`：公共资源接入。

@@ -2,12 +2,15 @@
 layout: false
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-visual-theme="original">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ff8fc7">
   <title>生日快乐呀！</title>
+  <script src="/js/theme-preload.js?v=20261021-appearance"></script>
+  <link rel="stylesheet" href="/css/visual-themes.css?v=20261021-appearance">
+  <script src="/js/theme-switcher.js?v=20261021-appearance" defer></script>
   <style>
     :root { --pink:#ff79b8; --yellow:#fff17b; --ink:#71385f; }
     * { box-sizing: border-box; }
@@ -44,7 +47,7 @@ layout: false
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; } }
   </style>
 </head>
-<body>
+<body class="birthday-page">
   <main class="page">
     <div class="ticker"><span>★ 今日份宇宙大事件：寿星闪亮登场！ ★ 请大家把祝福排好队！ ★ 蛋糕正在赶来的路上！ ★</span></div>
     <div class="sticker">✧ 重要通知 · 请查收 ✧</div>
