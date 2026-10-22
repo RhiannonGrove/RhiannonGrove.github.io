@@ -20,6 +20,14 @@
         <label><input type="radio" name="grove-background" value="video"><span>动态视频</span></label>
         <label><input type="radio" name="grove-background" value="image"><span>静态图片</span></label>
       </div><p class="appearance-note"></p></fieldset>
+      <fieldset class="appearance-opacity"><legend>卡片不透明度</legend>
+        <div class="appearance-range-heading"><label for="card-article-opacity">正文卡片</label><output for="card-article-opacity" id="card-article-value"></output></div>
+        <input id="card-article-opacity" name="grove-card-opacity-article" type="range" min="30" max="100" step="1" aria-describedby="card-opacity-note">
+        <div class="appearance-range-heading"><label for="card-widget-opacity">列表／侧栏卡片</label><output for="card-widget-opacity" id="card-widget-value"></output></div>
+        <input id="card-widget-opacity" name="grove-card-opacity-widgets" type="range" min="30" max="100" step="1" aria-describedby="card-opacity-note">
+        <p class="appearance-note" id="card-opacity-note">数值越小，背景越清楚。只调整卡片底色，不会淡化文字。</p>
+        <button class="appearance-reset" type="button">恢复本主题默认</button>
+      </fieldset>
       <p class="appearance-status" role="status" aria-live="polite"></p>
     </section>`;
   document.body.appendChild(settings);
@@ -28,6 +36,7 @@
   const status = settings.querySelector('.appearance-status');
   const themeNames = { original: 'Original', morandi: 'Morandi Light', wangxiang: 'Wangxiang Dark' };
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const opacity = window.GroveCardOpacity;
   let transitionTimer;
 
   const updateNavigation = () => {
@@ -48,11 +57,31 @@
     videoOption.disabled = root.dataset.hasVideo !== 'true';
     settings.querySelector('.appearance-background').hidden = !root.dataset.backgroundDefault;
     settings.querySelector('.appearance-note').textContent = motion.matches ? '系统已开启减少动态效果，当前使用静态图片。' : videoOption.disabled ? '站点暂未配置视频背景。' : '背景模式与视觉主题分别保存。';
+    settings.querySelector('.appearance-opacity').hidden = !opacity || !root.hasAttribute('data-card-opacity-defaults');
+    if (opacity) {
+      const currentOpacity = opacity.apply();
+      [['article', 'article'], ['widgets', 'widget']].forEach(([kind, id]) => {
+        const percent = Math.round(currentOpacity[kind] * 100);
+        const range = settings.querySelector(`#card-${id}-opacity`);
+        range.value = percent;
+        range.setAttribute('aria-valuetext', `${percent}% 不透明度`);
+        settings.querySelector(`#card-${id}-value`).value = `${percent}%`;
+      });
+    }
   };
 
   const save = (key, value) => {
     try { localStorage.setItem(key, value); return true; } catch (_) { return false; }
   };
+  settings.addEventListener('input', event => {
+    const input = event.target;
+    if (opacity && input.name.startsWith('grove-card-opacity-')) {
+      const kind = input.name.slice('grove-card-opacity-'.length);
+      const saved = opacity.set(kind, Number(input.value) / 100);
+      status.textContent = saved ? '' : '浏览器未允许保存偏好，本次调整仍然生效。';
+      updateControls();
+    }
+  });
   settings.addEventListener('change', event => {
     const input = event.target;
     if (input.name === 'grove-theme' && Object.hasOwn(themeNames, input.value)) {
@@ -66,8 +95,15 @@
       root.dataset.backgroundMode = input.value === 'video' && root.dataset.hasVideo === 'true' ? 'video' : 'image';
       const saved = save('grove-background-mode', root.dataset.backgroundMode);
       status.textContent = `已切换至${root.dataset.backgroundMode === 'video' ? '动态视频' : '静态图片'}${saved ? '' : '（浏览器未允许保存偏好）'}`;
+    } else if (input.name.startsWith('grove-card-opacity-')) {
+      status.textContent = status.textContent || '卡片不透明度已保存。';
     }
     updateControls();
+  });
+  settings.querySelector('.appearance-reset').addEventListener('click', () => {
+    const saved = opacity && opacity.reset();
+    updateControls();
+    status.textContent = `已恢复 ${themeNames[root.dataset.visualTheme]} 的卡片默认值${saved ? '' : '（浏览器未允许保存偏好）'}`;
   });
 
   const closePanel = (restoreFocus = false) => {
@@ -93,6 +129,7 @@
       const mode = ['video', 'image'].includes(event.newValue) ? event.newValue : root.dataset.backgroundDefault;
       root.dataset.backgroundMode = mode === 'video' && root.dataset.hasVideo === 'true' ? 'video' : 'image';
     }
+    if (opacity && (event.key === 'grove-card-opacity' || event.key === null)) opacity.restore(event.newValue);
     updateControls();
   });
   motion.addEventListener('change', updateControls);

@@ -14,3 +14,18 @@ home_cover:
   title: Rhiannon Grove
   subtitle: 在字里行间，慢慢生长。
 
+# 全站卡片默认不透明度：0.30～1.00，数值越小，背景越透。
+# article：文章、关于、归档、标签页的大卡片。
+# widgets：首页文章列表、侧栏和文章目录卡片。
+# 访客在“外观”中自行调整后，优先使用该浏览器保存的值。
+card_opacity:
+  original:
+    article: 0.66
+    widgets: 0.54
+  morandi:
+    article: 0.90
+    widgets: 0.86
+  wangxiang:
+    article: 0.90
+    widgets: 0.86
+

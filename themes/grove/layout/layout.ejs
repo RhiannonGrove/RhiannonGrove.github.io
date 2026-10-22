@@ -5,16 +5,16 @@
   const defaultBackgroundMode = configuredHomeCover.type === 'video' && hasBackgroundVideo ? 'video' : 'image';
 %>
 <!doctype html>
-<html lang="zh-CN" data-visual-theme="original" data-background-default="<%= defaultBackgroundMode %>" data-background-mode="<%= defaultBackgroundMode %>" data-has-video="<%= hasBackgroundVideo %>">
+<html lang="zh-CN" data-visual-theme="original" data-background-default="<%= defaultBackgroundMode %>" data-background-mode="<%= defaultBackgroundMode %>" data-has-video="<%= hasBackgroundVideo %>" data-card-opacity-defaults="<%= JSON.stringify(theme.card_opacity || {}) %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<%= config.description %>">
   <title><%= page.title ? page.title + ' · ' + config.title : config.title %></title>
-  <script src="<%- url_for('/js/theme-preload.js') %>?v=20261021-appearance"></script>
+  <script src="<%- url_for('/js/theme-preload.js') %>?v=20261022-card-opacity"></script>
   <link rel="stylesheet" href="<%- url_for('/css/style.css') %>?v=20261021-video-background">
-  <link rel="stylesheet" href="<%- url_for('/css/visual-themes.css') %>?v=20261021-appearance">
-  <script src="<%- url_for('/js/theme-switcher.js') %>?v=20261021-appearance" defer></script>
+  <link rel="stylesheet" href="<%- url_for('/css/visual-themes.css') %>?v=20261022-card-opacity">
+  <script src="<%- url_for('/js/theme-switcher.js') %>?v=20261022-card-opacity" defer></script>
   <script src="<%- url_for('/js/background.js') %>?v=20261021-appearance" defer></script>
   <script src="<%- url_for('/js/code-blocks.js') %>?v=20261020-text-copy" defer></script>
   <script src="<%- url_for('/js/home-stars.js') %>?v=20261020-fixed-bg-nav" defer></script>

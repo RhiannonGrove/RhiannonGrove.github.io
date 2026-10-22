@@ -91,3 +91,9 @@ home_cover:
 - `themes/grove/source/js/theme-switcher.js`：切换控件、键盘与焦点处理、偏好保存及跨标签同步。
 - `themes/grove/source/js/background.js`：视频播放、静态切换、减少动态效果及图片回退。
 - `themes/grove/layout/layout.ejs` 与 `source/birthday/index.html`：公共资源接入。
+
+## 卡片不透明度与维护手册
+
+“外观”面板提供正文、列表／侧栏两项不透明度滑块（30%～100%），按主题保存，支持恢复当前主题默认值。主题配置的 `card_opacity` 设置新访客的默认值；滑块只影响底色，不淡化文字或代码。
+
+完整的文字、标题、字号、尺寸、颜色、背景、代码和发布入口见网站文章：[Rhiannon Grove 网站自定义指南](https://rhiannongrove.github.io/guide/customization/)。

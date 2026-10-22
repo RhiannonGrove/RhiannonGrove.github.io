@@ -13,6 +13,8 @@
   --accent-secondary: #9fa9c4;
   --accent-detail: #b88f8c;
   --brand-accent: #526f67;
+  --card-article-rgb: 252 250 246;
+  --card-widget-rgb: 252 250 246;
   --border: rgba(137, 143, 132, .25);
   --divider: #ddd9d3;
   --link: #526f67;
@@ -56,6 +58,8 @@
   --accent-secondary: #a8a0cb;
   --accent-detail: #cdba89;
   --brand-accent: #cdba89;
+  --card-article-rgb: 32 41 59;
+  --card-widget-rgb: 27 35 52;
   --border: rgba(174, 194, 224, .2);
   --divider: rgba(174, 194, 224, .16);
   --link: #93b8dd;
@@ -110,6 +114,9 @@
   pointer-events: none;
 }
 :root[data-background-mode="image"] .site-background-video { display: none; }
+/* Alpha affects the surface only; text and code stay at full opacity. */
+:root[data-visual-theme] body.image-background .article { background-color: rgb(var(--card-article-rgb, 255 255 255) / var(--card-article-opacity, .66)); }
+:root[data-visual-theme] body.image-background :is(.post-section, .archive-widget, .tag-widget, .site-info-widget, .toc-card, .tag-section, .hero) { background-color: rgb(var(--card-widget-rgb, 255 255 255) / var(--card-widget-opacity, .54)); }
 :root[data-visual-theme]:not([data-visual-theme="original"]) :is(.post-section, .archive-widget, .tag-widget, .site-info-widget, .article, .toc-card, .tag-section, .hero) {
   border-color: var(--border);
   box-shadow: var(--shadow), var(--glow);
@@ -191,7 +198,7 @@
 .appearance-trigger:hover { color: var(--settings-accent); }
 .appearance-trigger:focus-visible, .appearance-close:focus-visible { outline: 2px solid var(--settings-accent); outline-offset: 3px; }
 .appearance-panel { position: absolute; bottom: 52px; left: 0; width: 292px; max-width: calc(100vw - 40px); max-height: calc(100dvh - 100px); overflow-y: auto; padding: 19px; color: var(--settings-ink); background: var(--settings-bg); border: 1px solid var(--settings-border); border-radius: 18px; box-shadow: var(--shadow, 0 16px 48px rgba(8, 15, 30, .18)); }
-.appearance-panel[hidden], .appearance-background[hidden] { display: none; }
+.appearance-panel[hidden], .appearance-background[hidden], .appearance-opacity[hidden] { display: none; }
 .appearance-heading { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
 .appearance-heading h2 { margin: 0; color: inherit; font: 600 16px/1.5 "Noto Sans SC", "Microsoft YaHei", sans-serif; }
 .appearance-close { width: 32px; height: 32px; padding: 0; background: transparent; border: 0; border-radius: 8px; font-size: 23px; }
@@ -212,6 +219,14 @@
 .appearance-check { margin-left: auto; color: var(--settings-accent); opacity: 0; }
 .appearance-option:has(input:checked) .appearance-check { opacity: 1; }
 .appearance-panel .appearance-background { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--settings-border); }
+.appearance-panel .appearance-opacity { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--settings-border); }
+.appearance-range-heading { display: flex; justify-content: space-between; align-items: center; margin: 8px 0 5px; gap: 12px; }
+.appearance-range-heading output { color: var(--settings-muted); font-variant-numeric: tabular-nums; }
+.appearance-opacity input[type="range"] { display: block; width: 100%; min-height: 24px; margin: 0; accent-color: var(--settings-accent); cursor: pointer; }
+.appearance-opacity input[type="range"]:focus-visible { outline: 2px solid var(--settings-accent); outline-offset: 2px; border-radius: 4px; }
+.appearance-reset { margin-top: 11px; padding: 7px 10px; color: var(--settings-ink); background: var(--settings-hover); border: 1px solid var(--settings-border); border-radius: 8px; font: inherit; cursor: pointer; }
+.appearance-reset:hover { color: var(--settings-accent); }
+.appearance-reset:focus-visible { outline: 2px solid var(--settings-accent); outline-offset: 2px; }
 .appearance-background-options { display: flex; gap: 7px; }
 .appearance-background-options label { position: relative; flex: 1; cursor: pointer; }
 .appearance-background-options span { display: block; padding: 8px 5px; text-align: center; border: 1px solid var(--settings-border); border-radius: 8px; }
