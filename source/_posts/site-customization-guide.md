@@ -1,5 +1,5 @@
 ---
-title: 网站自定义指南：文字、排版、配色与背景
+title: 网站自定义指南
 date: 2026-10-22 00:00:00
 updated: 2026-10-22 00:00:00
 permalink: guide/customization/
