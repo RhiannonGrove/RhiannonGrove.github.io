@@ -509,5 +509,279 @@ long result = (long) a * b;
 ```
 这样输出结果就是`10000000000`。
 
+### 5 `String` ：它是引用类型
+上一部分我们写过：
+```Java
+String name = "Alice";
+```
+如果你忘了，可以回到这一章的开头，仔细观看就会发现`String`其实不属于Java的八大类型之一。那秉承着好奇宝宝的性格，我们发现，`String`其实是Java提供的类，用于表示字符串。
+
+对于`String`类型，我们先掌握以下这些常用操作：
+```Java
+String name = "Alice";
+
+System.out.println(name.length()); // 5
+System.out.println(name.charAt(0)); // A
+System.out.println(name.charAt(4)); // e
+```
+注意：
+1. 字符串长度使用`length()`。
+2. 下标从`0`开始。
+3. 长度为`5`的字符串，有效下标是`0`到`4`。
+4. `charAt`返回`char`。
+
+另外需要提醒大家的是：还记得我们上文说过字符串中我们不需要加入`'\0'`吗？因此，`name.charAt(5);`是一种越界行为。
+
+### 6 字符串内容比较
+在C中，我们比较两个字符串内容时，通常使用：
+```C
+strcmp(first, second) == 0
+```
+那么在Java中，我们这样写：
+```Java
+first.equals(second)
+```
+有点忘了上文的代码？我们举个更具体的例子ヾ(＠⌒ー⌒＠)ノ：
+```Java
+String command = "add_player";
+
+if (command.equals("add_player")) {
+    System.out.println("添加玩家");
+}
+```
+这里 `.equals(...)` 返回一个 `boolean`，所以可以直接作为 `if` 的条件。
+
+不要用 `==` 判断字符串内容是否相同哦😋。
+```Java
+String first = new String("Alice");
+String second = new String("Alice");
+
+System.out.println(first == second);      // false
+System.out.println(first.equals(second)); // true
+```
+这两个字符串对象的内容一样，但它们是不同对象：
+```
+first  ──→ String 对象，内容为 Alice
+
+second ──→ 另一个 String 对象，内容也为 Alice
+```
+这也是有可能导致WA的原因之一哦~因为同样不会报错！
+
+当然，codex老师提醒我，有些字符串用 `==` 比较会碰巧得到 `true`，因为 Java 可能复用字符串对象。
+
+话说回来，当变量可能为`null`时，可以把确定存在的字符串放到前面：
+```Java
+if ("add_player".equals(command)) {
+    // ...
+}
+```
+这样即使 `command` 是 `null`，结果也是 `false`，不会因为调用 `command.equals(...)` 而触发空指针异常。
+
+### 7 字符串拼接与运算
+Java可以用`+`拼接字符串：
+```Java
+String name = "Alice";
+int hitPoint = 20;
+
+System.out.println(name + " " + hitPoint);
+```
+输出：
+```
+Alice 20
+```
+数字遇到字符串拼接时，会转换为对应的文本。
+
+不过要注意下方的情况：
+```Java
+System.out.println(1 + 2 + " HP");
+```
+此时会输出：
+```
+3 HP
+```
+而如果我们换个顺序：
+```Java
+System.out.println("HP " + 1 + 2);
+```
+则会输出：
+```
+HP 12
+```
+因为`+`会从左往右结合：
+```
+"HP " + 1 → "HP 1"
+"HP 1" + 2 → "HP 12"
+```
+如果需要先求和，则应加括号：
+```Java
+System.out.println("HP " + (1 + 2));
+```
+此时就会得到`HP 3`啦~
+
+### 8 字符串内容无法在原对象上进行修改
+例如：
+```Java
+String text = "Hello";
+text = text + " Java";
+```
+我们运行这个代码不会出发报错。但过程是产生拼接结果，再让`text`引用结果字符串，原来的字符串对象内容并没有被修改。
+
+听起来有点绕？我们再来看一下：
+```Java
+String first = "Hello";
+String second = first;
+
+first = first + " Java";
+
+System.out.println(first);  // Hello Java
+System.out.println(second); // Hello
+```
+最后两个变量引用的内容不同。
+
+这与上一部分中的：
+```Java
+Pet second = first;
+second.grow();
+```
+的情况有区别：
+ - `grow()`修改了共享宠物对象的内部状态。
+ - 字符串拼接后赋值，变量改为引用拼接结果。
+
+### 9 输出
+我们在Java中常用三种输出：`print`、`println`、`printf`，分别使用不用的场景。
+
+`print`输出后不换行：
+```Java
+System.out.print("Alice");
+System.out.print(" ");
+System.out.print(20);
+```
+会得到：
+```
+Alice 20
+```
+
+而`println`输出后会自动换行：
+```Java
+System.out.println("Alice");
+System.out.println(20);
+```
+得到：
+```
+Alice
+20
+```
+最后一种，也就是`printf`，长得跟C中一样，格式也十分类似：
+```Java
+System.out.printf("%s %d%n", "Alice", 20);
+```
+其余的我就不过多介绍，需要特别注意的是Java中的换行符为`%n`，而不是`\n`哦（＾∀＾●）ﾉｼ！
+
+
+### 10 使用`Scanner`读取输入
+介绍完了输出，那Java中的输入又是什么样子的呢？我们先来看一个程序：
+```Java
+import java.util.Scanner;
+
+public class MainClass {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String name = scanner.next();
+        int age = scanner.nextInt();
+
+        System.out.println(name + " " + age);
+    }
+}
+```
+此时输入：
+```
+Mimi 2
+```
+则会得到输出：
+```
+Mimi 2
+```
+相信聪明的你心里一定有所感悟。
+
+首先，我们需要引入`java.util`包中的`Scanner`类（前文我们说过，Java中输入输出都是类），这与C中的`#include`有些类似，但还是有所不同，我们就不在这里过多讨论。
+
+来看这一行：
+```Java
+Scanner scanner = new Scanner(System.in);
+```
+这个结构是不是看起来有点眼熟？是的，我们之前看到过同样的结构：
+```Java
+Pet pet = new Pet("Mimi",2);
+```
+这是在说明我们创建了一个负责读取输入的`Scanner`对象。
+`System.in`表示标准输入，目前我们可以将其理解为读取终端输入。
+
+然后：
+```Java
+String name = scanner.next();
+int age = scanner.nextInt();
+```
+代表分别读取一个字符串片段和一个整数。
+
+我将几个常用的读入数据类型放到下面👇：
+| 方法 | 读取内容 |
+|---|---|
+| `next()` | 下一个以空白符分隔的片段 |
+| `nextInt()` | 下一个整数，结果为 `int` |
+| `nextLong()` | 下一个整数，结果为 `long` |
+| `nextDouble()` | 下一个浮点数，结果为 `double` |
+| `nextLine()` | 从当前位置读到当前行结束，返回其中的文本 |
+（其实我觉得这比C要好，当时我可是被读入到底用什么搞得晕头转向༼ つ ◕_◕ ༽つ）
+
+需要注意的是（其实你们应该也发现了），`next()`读取时，会截断到空白符，如空格、制表符、换行符等。
+
+而`nextLine()`呢，同C一样，会发生如下情况：
+```Java
+int count = scanner.nextInt();
+String line = scanner.nextLine();
+```
+输入：
+```
+2
+add_player Alice
+add_player Bob
+```
+输出：
+```
+count = 2
+line = ""
+```
+原因在于`nextInt()`读取整数`2`后，扫描位置还在第一行的行结束符之前。
+
+接着`nextLint()`读取当前位置到一行结束的剩余内容，于是就会返回空字符串，并越过第一行的行结束符。
+
+对于上面的情况，我们有两种解决方式：
+No.1：额外读掉第一行的剩余内容：
+```Java
+int count = scanner.nextInt();
+scanner.nextLine();
+
+String line = scanner.nextLine();
+```
+（好眼熟啊喂，学会C语言，走遍天下都不怕！古人诚不欺我）。
+No.2：始终按行读取，但进行转换：
+```Java
+int count = Integer.parseInt(scanner.nextLine().trim());
+String line = scanner.nextLine();
+```
+这就与C的处理有所不同了，指导书中推荐的解析方式是第二种。（果然不论到哪里，输入输出都是我最头疼的部分，想当初数据结构期末，就是因为输出问题导致Rhiannon彻底失败，Rhiannon审了一百遍代码，下机后发现copy来的代码有个循环没删）
+
+
+
+### 11 
+
+
+
+
+
+
+
+
 
 
