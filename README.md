@@ -97,3 +97,7 @@ home_cover:
 “外观”面板提供正文、列表／侧栏两项不透明度滑块（30%～100%），按主题保存，支持恢复当前主题默认值。主题配置的 `card_opacity` 设置新访客的默认值；滑块只影响底色，不淡化文字或代码。
 
 完整的文字、标题、字号、尺寸、颜色、背景、代码和发布入口见网站文章：[Rhiannon Grove 网站自定义指南](https://rhiannongrove.github.io/guide/customization/)。
+
+## 文章更新时间
+
+文章页由 `themes/grove/scripts/post-updated.js` 读取该篇文件的 Git 修改记录（跟随文件重命名），与发表时间及手动 `updated` 取较晚值。只有首次提交、没有后续修改时沿用发表时间；无完整 Git 历史时使用头部日期回退，不使用检出文件的 mtime。部署中的 `actions/checkout` 应保留 `fetch-depth: 0`。日期仍按年月日显示，悬停可查看完整时间。

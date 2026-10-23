@@ -80,6 +80,8 @@ meta_generator: true
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 ## updated_option supports 'mtime', 'date', 'empty'
+# Safe fallback: GitHub Actions checkout changes filesystem mtimes on every build.
+# Grove resolves each article's actual update time from its own Git history.
 updated_option: 'date'
 
 # Pagination

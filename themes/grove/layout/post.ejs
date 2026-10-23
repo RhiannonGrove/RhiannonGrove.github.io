@@ -1,7 +1,7 @@
 <%
   const articleToc = toc(page.content, { list_number: false });
   const hasToc = articleToc.includes('<li');
-  const articleUpdated = page.updated || page.date;
+  const articleUpdated = grove_post_updated(page);
 %>
 
 <div class="reading-layout<%= hasToc ? '' : ' no-toc' %>">
@@ -13,12 +13,12 @@
       <p class="article-meta">
         <span class="article-meta-item">
           <span class="article-meta-icon" aria-hidden="true">▦</span>
-          发表于 <time datetime="<%= date(page.date, 'YYYY-MM-DD') %>"><%= date(page.date, 'YYYY-MM-DD') %></time>
+          发表于 <time datetime="<%= date(page.date, 'YYYY-MM-DDTHH:mm:ssZ') %>" title="<%= date(page.date, 'YYYY-MM-DD HH:mm:ss') %>"><%= date(page.date, 'YYYY-MM-DD') %></time>
         </span>
         <span class="article-meta-divider" aria-hidden="true">|</span>
         <span class="article-meta-item">
           <span class="article-meta-icon" aria-hidden="true">↻</span>
-          更新于 <time datetime="<%= date(articleUpdated, 'YYYY-MM-DD') %>"><%= date(articleUpdated, 'YYYY-MM-DD') %></time>
+          更新于 <time datetime="<%= date(articleUpdated, 'YYYY-MM-DDTHH:mm:ssZ') %>" title="<%= date(articleUpdated, 'YYYY-MM-DD HH:mm:ss') %>"><%= date(articleUpdated, 'YYYY-MM-DD') %></time>
         </span>
       </p>
       <% if (page.tags && page.tags.length) { %>
