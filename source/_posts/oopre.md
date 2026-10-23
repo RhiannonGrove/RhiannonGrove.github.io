@@ -387,7 +387,7 @@ public class Example {
 }
 ```
 
-## 二 如何在对象面前故作坚强
+## 二、完成一些简单交互
 这一部分我们会主要学习一下Java的基本类型、字符串、输入输出，以及怎样读取操作指令。
 学完这些，你将能够
 
@@ -772,9 +772,113 @@ String line = scanner.nextLine();
 ```
 这就与C的处理有所不同了，指导书中推荐的解析方式是第二种。（果然不论到哪里，输入输出都是我最头疼的部分，想当初数据结构期末，就是因为输出问题导致Rhiannon彻底失败，Rhiannon审了一百遍代码，下机后发现copy来的代码有个循环没删）
 
+我们进一步详细看一下这个代码。
+
+这段代码的作用是：
+ < 读取一整行输入，去掉首位空白，把剩下的文本转化为整数存储到变量当中。
+```Java
+int count = Integer.parseInt(scanner.nextLine().trim());
+```
+这行代码其实是几个步骤的整合：
+```Java
+String original = scanner.nextLine();
+String cleaned = original.trim();
+int count = Integer.parseInt(cleaned);
+```
 
 
-### 11 
+
+
+### 11 字符串分割
+在第二次作业中，我们遇到：
+```Java
+String[] parts = line.trim().split(" +");
+```
+拆开来看。
+
+我们先定义（注意空白符）：
+```Java
+String line = "  add_potion   Alice   heal1   50  ";
+```
+首先，`line.tirm()`负责去掉首位空格，得到字符串：`add_potion   Alice   heal1   50`。
+
+在这里，原来的变量`line`不会被修改，而`trim()`返回处理后的结果。
+
+紧接着是`.split(" +")`，这个知识点就比较新颖了，意思是“按一个或多个普通空格分割”，` +`在这里是一个正则表达式：
+ - 空格表示匹配普通空格
+ - `+`表示前面的内容出现一次或多次。
+这样我们得到的字符串数组就是：
+```
+parts[0] = "add_potion"
+parts[1] = "Alice"
+parts[2] = "heal1"
+parts[3] = "50"
+```
+接着，我们就可以使用上一节中提到的方法将`part[3]`转化为`int`类型进行保存。
+
+哦对！回来补充一下几个长度写法：
+| 对象 | 获取长度或数量 |
+|---|---|
+| 数组 `parts` | `parts.length` |
+| 字符串 `line` | `line.length()` |
+| 下一部分的 `ArrayList` | `list.size()` |
+（~~带括号or不带，这是个值得思考的问题~~）😋
+
+### 12 读取操作的完整示例
+说了这么多，我觉得放个代码切片，希望能够帮助大家回忆并整合一下：
+```Java
+import java.util.Scanner;
+
+public class MainClass {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int count = Integer.parseInt(scanner.nextLine().trim());
+
+        for (int i = 0; i < count; i++) {
+            String line = scanner.nextLine();
+            String[] parts = line.trim().split(" +");
+
+            String command = parts[0];
+
+            if ("add_player".equals(command)) {
+                String name = parts[1];
+
+                System.out.println("读取到玩家：" + name);
+            } else if ("add_potion".equals(command)) {
+                String name = parts[1];
+                String potionId = parts[2];
+                int amplifier = Integer.parseInt(parts[3]);
+
+                System.out.println(
+                    "读取到药水：" + name + " "
+                    + potionId + " " + amplifier
+                );
+            }
+        }
+    }
+}
+```
+输入：
+```
+3
+add_player Alice
+add_potion Alice heal1 50
+add_player Bob
+```
+输出：
+```
+读取到玩家：Alice
+读取到药水：Alice heal1 50
+读取到玩家：Bob
+```
+
+
+## 三、怎样保存多个对象
+这一部分，我们将学习`ArrayList`的相关内容，作为第二次作业的核心知识点，我们将解决对象的管理、查找以及删除的操作。
+
+### 1 从C出发
+
 
 
 
