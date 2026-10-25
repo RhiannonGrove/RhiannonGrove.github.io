@@ -878,9 +878,150 @@ add_player Bob
 这一部分，我们将学习`ArrayList`的相关内容，作为第二次作业的核心知识点，我们将解决对象的管理、查找以及删除的操作。
 
 ### 1 从C出发
+假设用C保存多个整数：
+```Java
+int numbers[100];
+int count = 0;
 
+numbers[count++] = 10;
+numbers[count++] = 20;
+```
+如果你想在数组中实现删除一个元素后自动填补，会比较麻烦。
 
+而Java贴心的为我们提供了`ArrayList`，可以先把它理解为能够自动调整容量的顺序表，类似游戏背包中的“一键整理”：
+```Java
+improt java.util.ArrayList;
+```
+那么我们上面的C代码就可以写为：
+```Java
+ArrayList<Integer> numbers = new ArrayList<>();
 
+numbers.add(10);
+numbers.add(20);
+```
+当然，它的元素个数也可以自行更新：
+```Java
+System.println(number.size());
+```
+
+### 2 声明
+```Java
+ArrayList<Potion> potions = new ArrayList<>();
+```
+我们拆开来看，`ArrayList<Potion>`代表一个用来保存`Potion`引用的列表类型，而`new ArrayList<>()`则表明我们要创建一个空列表对象，变量名为`potions`。
+
+注意，这里的`Potion`是我们自定义的一个类，稍后我们会对其进行进一步的说明。
+
+尖括号里的类型，限制并说明了我们新建的列表可以接受什么类型的元素：
+```Java
+ArrayList<Potion> potions = new ArrayList<>();
+```
+这里表示它是药水（`Potion`）列表，不能随意的放东西。
+
+例如，如果我们尝试运行：
+```Java
+potions.add("Alice");
+```
+则会发生编译错误。
+
+右边的`new ArrayList<>()`同样有个尖括号，我们可以填写`Potion`，但不写也没啥问题，编译器会根据左边自行推断的。
+
+嗯嗯！还有一个小知识点，尖括号内不能直接填写基本类型。如果想要保存整数，我们应该这样写：
+```Java
+ArrayList<Integer> numbers = new ArrayList<>();
+```
+而
+```Java
+ArrayList<int> numbers = new ArrayList<>(); 
+```
+则会发生编译错误。
+
+### 3 空列表与`null`
+下面两行代码区别还是很大的：
+```Java
+ArrayList<Potion> first = null;
+ArrayList<Potion> second = new ArrayList<>();
+```
+`first`没有列表对象的指向，而`second`则指向一个具体的列表对象，但其中的元素个数为0.
+
+因此
+```Java
+System.out.println(second.size());
+```
+输出为`0`，而
+```Java
+System.out.println(first.size());
+```
+则会抛出：`NullPointException`。
+
+同样，我们可以在空列表中添加元素，但无法在`null`上添加。
+
+### 4 定义一个类
+在几次作业中我们会用到“药品”这个类，现在我们把它拿出来进行说明。
+（下面的代码保存在`Potion.java`中）
+```Java
+public class Potion {
+    private String potionId;
+    private int amplifier;
+
+    public Potion(String potionId, int amplifier) {
+        this.potionId = potionId;
+        this.amplifier = amplifier;
+    }
+
+    public String getPotionId() {
+        return potionId;
+    }
+
+    public int getAmplifier() {
+        return amplifier;
+    }
+}
+```
+现在的你肯定能够明白其中的道理。
+
+在这段代码中，我们有两个字段以及三个方法。
+
+我们在这里只提一点，方法中的`return amplifier;`等价于`return this.amplifier;`。
+
+因为当前方法中没有同名的局部变量或者参数，因此省略`this`不会造成歧义。
+
+### 5 添加、访问和修改列表元素
+一位玩家可以随身携带许多药水，我们为每一位玩家创建一个药水列表：
+```Java
+ArrayList<Potion> potions = new ArrayList<>();
+
+Potion first = new Potion("heal1", 50);
+Potion second = new Potion("damage1", 10);
+
+potions.add(first);
+potions.add(second);
+```
+现在列表中有两个元素。
+
+我们取出下标为`0`的元素：
+```Java
+Potion potion = potions.get(0);
+```
+然后调用它（Potion）的方法（还记得上一条中给出的药水类中的方法吗(╹ڡ╹ )）：
+```Java
+System.out.println(potion.getPotionId()); // heal1
+System.out.println(potion.getAmplifier()); // 50
+```
+当然我们也可以连着写：
+```Java
+System.out.println(potions.get(0).getAmplifier());
+```
+与C不同的是，访问列表的时候我们应该使用`get(i)`，而`potions[0];`这样的写法是不对的。
+
+上面是访问的知识点，现在我们来看一下如何替换列表中的元素。
+如果我们想要替换某个位置的元素，应该使用`set`：
+```Java
+potions.set(0,new Potion("strength1", 20));
+```
+对于空列表，由于现在没有元素，因此`potions.get(0)`的写法是错误的。
+
+### 6 列表保存的是对象引用
 
 
 
