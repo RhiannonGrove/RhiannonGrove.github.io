@@ -785,7 +785,11 @@ String original = scanner.nextLine();
 String cleaned = original.trim();
 int count = Integer.parseInt(cleaned);
 ```
+我们一步步来看：
 
+1. `scanner.nextLine()`:读取当前这一行
+2. `trim()`: 取得去掉首尾空白后的字符串。当然，它不会删去中间的空白符。
+3. `Integer.parseInt(cleaned)`：把字符串强制转换成`int`。
 
 
 
@@ -1022,11 +1026,452 @@ potions.set(0,new Potion("strength1", 20));
 对于空列表，由于现在没有元素，因此`potions.get(0)`的写法是错误的。
 
 ### 6 列表保存的是对象引用
+这点和我们第一部分提到的引用知识直接相连：
+```Java
+Potion potion = new Potion("heal1", 50);
+potions.add(potion);
+```
+执行后，并没有因为`add`而复制出第二瓶药水，而是在`potions`中添加了一个引用`potion`的方法。
 
+因此：
+```Java
+Potion another = potions.get(0);
+```
+得到的仍然是对同一个药水对象的引用。
 
+### 7 遍历列表
+遍历列表有两种常用的方法。
 
+第一种是我们熟悉的下标循环：
+```Java
+for (int i = 0; i < potions.size(); i++) {
+    Potion potion = potions.get(i);
+    System.out.println(potion.getPotionId());
+}
+```
+另一种被称为**增强`for`循环**：
+```Java
+for (Potion potion : potions){
+  System.out.println(potion.getPotionId());
+}
+```
+对于两种方法的选择，我们可以先遵循：
+1. 如果只需要逐个查看对象，增强`for`循环更简洁；
+2. 如果需要下标，或者准备按下标进行删除，则第一种方法比较方便。
 
+### 8 按ID查找药水
+这个部分主要举一个使用`ArrayList`的例子，方便读者理解。
 
+```Java
+public Potion findPotion(String targetId) {
+    for (Potion potion : potions) {
+        if (potion.getPotionId().equals(targetId)) {
+            return potion;
+        }
+    }
 
+    return null;
+}
+```
+这段方法在拥有`potions`字段的类中。
 
+调用时：
+```Java
+Potion found = findPotion("heal1");
 
+if (found != null) {
+  System.out.println(found.getAmplifier());
+}
+```
+
+### 9 删除元素，下标自动更新
+我们在最开始说过，`ArrayList`是一个非常智慧的列表，会根据删除与否自动更新下标。除此之外，按下标删除时，`remove`还会返回刚刚移除的元素：
+```Java
+Potion removed = potions.remove(i);
+```
+这就非常省心了，如果我们需要输出删除信息，可以直接进行操作：
+```Java
+System.out.println(removed.getPotionId());
+```
+从这里我们也能看出：从列表中移除引用，并不意味着这个对象立刻不能使用。
+
+这有点像C中将结构体放到栈中，不过更开心的是，Java并不需要像C中进行放生（`free`），满足一定条件后，由垃圾回收机制进行处理。
+
+### 10 让玩家管理自己的药水
+一个游戏中不可能只有一个玩家，游戏中的药水都是有主人的。
+
+因此，每个玩家都应该有一个“药水背包”，用于存放自己的药水。
+
+因此，在`Player.java`中，我们为玩家准备一个药水列表，并让玩家能够对药水进行使用、删除等操作：
+```Java
+import java.util.ArrayList;
+
+public class Player {
+    private String name;
+    private ArrayList<Potion> potions;
+
+    public Player(String name) {
+        this.name = name;
+        this.potions = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addPotion(Potion potion) {
+        potions.add(potion);
+    }
+
+    public int getPotionCount() {
+        return potions.size();
+    }
+
+    public Potion findPotion(String targetId) {
+        for (Potion potion : potions) {
+            if (potion.getPotionId().equals(targetId)) {
+                return potion;
+            }
+        }
+
+        return null;
+    }
+
+    public Potion removePotion(String targetId) {
+        for (int i = 0; i < potions.size(); i++) {
+            Potion potion = potions.get(i);
+
+            if (potion.getPotionId().equals(targetId)) {
+                return potions.remove(i);
+            }
+        }
+
+        return null;
+    }
+}
+```
+这里我们只看一个知识点：
+```Java
+public Player(String name) {
+  this.name = name;
+  this.potions = new ArrayList<>();
+}
+```
+意思是每创建一个玩家，都创建属于这个玩家的名字字符串和药水列表。
+
+如果我们创建两个玩家：
+```Java
+Player alice = new Player("Alice");
+Player bob = new Player("Bob");
+```
+那么这两个玩家的药水列表彼此独立。
+
+## 四、一些疑问
+这一部分主要搬一些我在写作业时问codex老师的一些问题，同时codex整合了一些其它知识点，帮助我们将前面的代码片段组织为完整的程序。
+
+### 1 Java的参数传递
+Java的参数传过去的是变量值的副本，这跟C中是一样的。我们从整数类型开始：
+```Java
+public static void change(int number) {
+    number = 100;
+}
+```
+在`main`中进行调用：
+```Java
+int value = 10;
+
+change(value);
+
+System.out.println(value); // 10
+```
+调用时，并不是把`value`交给方法直接操作，也就是说，我们没有传递地址，而只是一个数值。
+
+如果我们想在函数中修改`value`，由于Java中没有传递地址一说，因此最方便简洁的方法是：
+```Java
+public static int increase(int number) {
+    return number + 1;
+}
+```
+```Java
+int value = 10;
+
+value = increase(value);
+
+System.out.println(value); // 11
+```
+
+### 2 传递对象
+传递对象时，复制的是引用。现在使用我们在前面定义过的`Player`和`Potion`：
+```Java
+public static void givePotion(Player player) {
+    player.addPotion(new Potion("heal1", 50));
+}
+```
+在`main`中：
+```Java
+Player alice = new Player("Alice");
+
+givePotion(alice);
+
+System.out.println(alice.getPotionCount()); // 1
+```
+我们可以看到玩家的药水数量发生了改变，与上一部分相比，二者都是传入参数，但不同的是，后者`alice`中保存的是引用，传参时复制了引用，让参数变量也引用同一个对象。
+
+我们需要理解：**Java始终按值传参，对于引用类型，复制过去的值就是引用**。
+
+### 3 修改对象，与给参数重新赋值
+这两个操作完全不一样。
+
+看这个方法：
+```Java
+public static void replacePlayer(Player player) {
+    player = new Player("Bob");
+}
+```
+调用该方法：
+```Java
+Player alice = new Player("Alice");
+
+replacePlayer(alice);
+
+System.out.println(alice.getName()); // Alice
+```
+为什么没有变成Bob？
+
+刚进入方法时，`alice`和`player`都指向统一个对象`Alice`。
+
+接着我们执行：
+```Java
+player = new Player("Bob");
+```
+执行后`alice`指向`Alice`对象，而`player`指向的是新建的`Bob`对象。
+
+把两种操作放到一起，我们来看一下：
+| 方法内部执行的操作 | 改变什么 | 调用者能否通过原引用看到对象变化 |
+|---|---|---|
+| `player.addPotion(...)` | 共享对象的内部状态 | 能 |
+| `player = new Player("Bob")` | 参数变量保存的引用 | 不会因此改变原对象 |
+| `player = null` | 参数变量保存的引用 | 不会让调用者的变量变成 `null` |
+
+如果确实想让调用者改为新引用对象，可以返回它：
+```Java
+public static Player createPlayer(String name) {
+    return new Player(name);
+}
+```
+调用者接收：
+```Java
+Player player = new Player("Alice");
+
+player = createPlayer("Bob");
+
+System.out.println(player.getName()); // Bob
+```
+
+### 4 实例成员属于对象，`static`成员属于类
+前面的`Player`中我们有：
+```Java
+private String name;
+```
+以及：
+```Java
+public String getName() {
+    return name;
+}
+```
+它们没有`static`，分别称为实例字段和实例方法。
+
+创建两个玩家：
+```Java
+Player alice = new Player("Alice");
+Player bob = new Player("Bob");
+```
+两个对象各自保存自己的`name`:
+```Java
+System.out.println(alice.getName()); // Alice
+System.out.println(bob.getName());   // Bob
+```
+调用实例方法时，点号前面的对象决定了方法中的`this`：
+```Java
+alice.getName();// this 是 Alice 对象
+bob.getName();// this 是 Bob 对象
+```
+现在我们看一个用于演示`static`的类：
+```Java
+public class Counter {
+    private int value;
+    private static int createdCount = 0;
+
+    public Counter() {
+        value = 0;
+        createdCount++;
+    }
+
+    public void increase() {
+        value++;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public static int getCreatedCount() {
+        return createdCount;
+    }
+}
+```
+这里：
+```Java
+private int value;
+```
+每个`Counter`对象各有一份。
+
+而：
+```Java
+private static int createdCount;
+```
+属于`Counter`类，所有`Counter`对象共享这一份类级别的计数。
+
+假设程序中第一次创建这两个计数器：
+```Java
+Counter first = new Counter();
+Counter second = new Counter();
+
+first.increase();
+
+System.out.println(first.getValue());        // 1
+System.out.println(second.getValue());       // 0
+System.out.println(Counter.getCreatedCount()); // 2
+```
+`static`不代表不可修改，也不表示常量。
+
+### 5 为什么`main`不能直接访问实例字段
+来看一段错误代码：
+```Java
+public class MainClass {
+    private int count = 0;
+
+    public static void main(String[] args) {
+        count++; // 编译错误
+    }
+}
+```
+问题有三：
+ - `count`属于某个`MainClass`对象。
+ - `main `是静态方法，可以在没有创建任何`MainClass`对象时执行。
+ - 此处没有指定需要对哪个对象的`count`进行修改。
+
+如果确实需要访问这个实例字段，我们要先创建对象：
+```Java
+public class MainClass {
+    private int count = 0;
+
+    public static void main(String[] args) {
+        MainClass app = new MainClass();
+
+        app.count++;
+
+        System.out.println(app.count); // 1
+    }
+}
+```
+也可以让实例方法完成操作：
+```Java
+public class MainClass {
+    private int count = 0;
+
+    public void run() {
+        count++;
+        System.out.println(count);
+    }
+
+    public static void main(String[] args) {
+        MainClass app = new MainClass();
+        app.run();
+    }
+}
+```
+这里`run()`具有当前对象，因此可以访问该对象的`count`。
+
+### 6 `main`里面能创建、使用对象吗？
+答案是完全可以！
+```Java
+public static void main(String[] args) {
+    Player alice = new Player("Alice");
+
+    alice.addPotion(new Potion("heal1", 50));
+
+    System.out.println(alice.getPotionCount());
+}
+```
+`main`是静态方法，并不妨碍它操作对象。这里已经明确给出了对象`alice.addPotion(...);`，所以Java完全知道要调用哪个玩家的方法。
+
+不允许的是，在没有当前对象、也没有指定对象的情况下，直接访问实例成员。
+
+### 7 `private`只是半私人
+只给列表字段加 `private`，并不一定就保护好了内部数据。
+
+例如：
+```Java
+public ArrayList<Potion> getPotions() {
+    return potions;
+}
+```
+它返回的是内部列表的引用。外部代码于是能够执行：
+```Java
+player.getPotions().clear();
+```
+直接清空玩家的药水列表。
+
+因此，如果外部只需要知道数量，就提供：
+```Java
+public int getPotionCount() {
+    return potions.size();
+}
+```
+如果外部需要删除指定药水，就提供：
+```Java
+public Potion removePotion(String potionId) {
+    // 由 Player 自己完成删除
+}
+```
+设计方法时，先考虑调用者需要完成什么操作，再决定提供什么接口。 不需要为每个字段都自动配上一套 `getter` 和 `setter`。
+
+## 五、药水质检站
+这一节的目标是：写完一个方法后，能够自己验证它是否正确，发现错误后，知道大致的范围。
+
+课程中的要求是JUnit4。
+
+这跟程设课上最后一节课（但没有纳入考试）的内容差不多，JUnit允许把“期望结果是多少”写入程序，不需要我们手动为每一个添加打印代码进行双眼检测。
+
+### 1 第一个测试：
+先看一个完整的最小测试类：
+```Java
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class PlayerTest {
+    @Test
+    public void newPlayerHasNoPotions() {
+        Player player = new Player("Alice");
+
+        assertEquals(0, player.getPotionCount());
+    }
+}
+```
+这份代码放在`PlayerTest.java`中。
+按照课程要求，目录大致为：
+```java
+项目目录/
+├── src/
+│   ├── Player.java
+│   ├── Potion.java
+│   └── MainClass.java
+└── test/
+    └── PlayerTest.java
+```
+其中：
+- `src` 保存功能代码。
+- `test` 保存验证这些功能的测试代码。
+测试代码可以调用 `Player`，但不需要放进正式程序的 `main` 方法里。
