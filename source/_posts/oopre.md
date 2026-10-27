@@ -1,5 +1,5 @@
 ---
-title: 一周通关oopre【连载】
+title: 一周通关oopre（一）
 date: 2026-10-20 17:47:00
 tags:
   - oopre
