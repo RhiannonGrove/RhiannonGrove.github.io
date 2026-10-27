@@ -1475,3 +1475,93 @@ public class PlayerTest {
 - `src` 保存功能代码。
 - `test` 保存验证这些功能的测试代码。
 测试代码可以调用 `Player`，但不需要放进正式程序的 `main` 方法里。
+
+### 3 逐句理解新语法
+先看：
+```Java
+import org.junit.Test;
+```
+它引用JUnit4中提供的`Test`注解。
+
+接着：
+```Java
+@Test
+public void newPlayerHasNoPotions() {
+    // ...
+}
+```
+这里的JUnit4测试方法采用：
+```Java
+public void 方法名()
+```
+它没有参数，也不返回结果。
+
+`newPlayerHasNoPotions` 是我们自己起的方法名，意思是“新玩家没有药水”。你也可以起别的名字，但让名字说明测试目的，之后查看失败结果会方便很多。
+
+再看：
+```
+import static org.junit.Assert.assertEquals;
+```
+这是静态导入，允许直接写：`assertEquals(...);`不用每次都写完整的类名。
+
+最后是关键的一句：
+```Java
+assertEquals(0, player.getPotionCount());
+```
+它表示：
+ > 我期望结果是 0，请检查实际药水数量是否等于 0。
+
+常用顺序是：`assertEquals(期望值, 实际值);`
+例如：
+```Java
+assertEquals(3, result);
+```
+表示我们认为 `result` 应该是 `3`。
+
+期望值应来自题目要求和对行为的分析，而不是为了让测试通过，照着程序当前输出填写。
+
+### 4 测试失败时，会发生什么
+如果玩家创建后实际药水数量是 1，那么
+```Java
+assertEquals(0, player.getPotionCount());
+```
+就会失败。测试结果通常会显示类似：
+```
+expected: 0
+actual:   1
+```
+JUnit 的断言失败通常通过抛出 `AssertionError` 来报告。当前测试方法会在这里停止，后面的语句不会继续执行；测试工具通常仍会继续运行其他测试。
+
+常用的几个断言是：
+| 断言 | 检查什么 |
+|---|---|
+| `assertEquals(expected, actual)` | 实际值是否符合期望值 |
+| `assertNull(value)` | 引用是否为 `null` |
+| `assertNotNull(value)` | 引用是否不是 `null` |
+| `assertSame(expected, actual)` | 两个引用是否指向同一个对象 |
+| `assertTrue(condition)` | 条件是否为真 |
+| `assertFalse(condition)` | 条件是否为假 |
+
+### 5 一个测试通常分为三步
+看添加药水的测试：
+```Java
+@Test
+public void addingPotionIncreasesCount() {
+    // 1. 准备对象
+    Player player = new Player("Alice");
+    Potion potion = new Potion("heal1", 50);
+
+    // 2. 执行要验证的操作
+    player.addPotion(potion);
+
+    // 3. 检查结果
+    assertEquals(1, player.getPotionCount());
+}
+```
+这三个步骤可以对应为：
+```
+准备条件 → 执行操作 → 验证结果
+```
+
+## 结语
+是不是被这个标题吓到了😉，其实并非是oopre的结束，这大概只到第二次课程作业。别担心！因为这篇文章太长了，所以我决定新开一篇文章续写！我们下本书见ヽ(✿ﾟ▽ﾟ)ノ。
