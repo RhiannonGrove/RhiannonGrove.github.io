@@ -1183,3 +1183,103 @@ System.out.println(first.equals(second)); // 希望为 true
 public boolean equals(Object obj)
 ```
 我们需要在 `Book` 中重写它，定义书籍自己的相等规则。
+
+### 3 重写相等规则
+在 `Book.java` 顶部引入：
+```Java
+import java.util.Objects;
+```
+然后在 `Book` 类内部加入：
+```Java
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) {
+        return true;
+    }
+
+    if (!(obj instanceof Book)) {
+        return false;
+    }
+
+    Book other = (Book) obj;
+
+    return Objects.equals(this.name, other.name)
+        && Objects.equals(this.magic, other.magic);
+}
+```
+这段看起来较长，其实逻辑还是很清楚的。
+
+首先判断传进来的是不是当前对象自己，如果是，则直接返回`true`；其次判断传进来的对象是不是类`Book`，如果不是，则返回`false`；然后由于已经确认对象为书，可以进行转换；最后对两个对象的名字和内容进行比较判断。
+
+### 4 `Objects.equals`
+`Objects` 是 `Java` 提供的工具类，注意名字末尾有一个 `s`，它与 `Object` 类不同。
+```Java
+Objects.equals(first, second)
+```
+可以安全比较两个可能为 `null` 的引用。
+
+大致规则是：
+| 参数情况 | 结果 |
+|---|---|
+| 两者都是 `null` | `true` |
+| 只有一个是 `null` | `false` |
+| 两者都不是 `null` | 使用对象的 `equals` 比较 |
+
+如果直接写：
+```Java
+this.name.equals(other.name)
+```
+当 `this.name` 为 `null` 时，就会发生空指针异常（`second` 可以是 `null`，会返回 `false`)。当然，如果你能确保不为`null`的话，则可以随意。
+
+因此，`Objects.equals` 常用于编写字段比较逻辑。
+
+还有一个细节：
+```Java
+other.name
+```
+虽然访问的是另一个书对象的私有字段，但当前代码就在 `Book` 类内部，因此允许访问。`private` 的访问限制以类为边界，并不是“只能通过 `this` 访问”。
+
+### 5 参数必须为`Object`
+我们可以看到：
+```Java
+public boolean equals(Object obj)
+```
+参数类型是`Object`。
+
+这跟重写的规则有关系。如果我们写成：
+```Java
+public boolean equals(Book other) {
+    // 比较字段
+}
+```
+就没有重写`Object`的方法，因为父类原方法的参数类型是`Object`。
+
+改成`Book`后，参数列表不同，就形成了重载。
+
+### 6 如何影响书架合并
+假设书架合并时有：
+```Java
+if (!books.contains(book)) {
+    books.add(book);
+}
+```
+这里 `books` 是：
+```Java
+ArrayList<Book>
+```
+对于非空的待查找对象，`contains` 根据 `equals` 判断列表里有没有相等元素。
+
+所以：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = new Book("BookA", "#123#");
+
+ArrayList<Book> books = new ArrayList<>();
+books.add(first);
+
+System.out.println(books.contains(second));
+```
+如果没有重写 `equals`，这两个独立书对象通常被认为不同，结果为 `false`。
+
+按今天的规则正确重写后，结果就是`true`，这会直接影响“是否重复、是否应该加入”的判断。
+
