@@ -666,3 +666,520 @@ for (Potion potion : potions) {
 }
 ```
 这样就不需要我们通过`else`和`if`来实现啦！
+
+
+## 八、技能通行证
+上一课，我们已经能通过
+```Java
+Potion potion = new HealPotion("heal1", 5);
+potion.use(target);
+```
+调用具体药水的效果。
+但现在我们的背包统一保存的是：
+```Java
+ArrayList<Item> items;
+```
+取出来的引用类型是`Item`，比如`Potion`可以使用，但目前`Equipment`却没有使用功能。
+
+这次我们就学习如何取出一个`item`后判断能否进行使用。
+
+在Java中，我们使用**接口**来实现这一判断，用`interface`来表达这种约定。
+
+### 1 定义`Usable`接口
+建立`Usable.java`：
+```Java
+public interface Usable {
+    void use(Player target);
+}
+```
+首先，`public interface Usable`表示定义一个名为`Usable`的公开接口。
+
+接口名`Usable`是我们自己定义的。
+
+里面`void use(Player target)`声明：具备这种能力的对象，应该提供什么方法：方法名为`use`，接收一个`Player`引用，不返回值。
+
+这个接口其实隐含了：
+```Java
+public abstract void use(Player target);
+```
+接口当然也可以定义其它种类的方法，但目前我们先掌握这种抽象方法形式。
+
+### 2 `implements`：声明自己实现了这份约定
+上一课的`Potion`可以修改为：
+```Java
+public abstract class Potion extends Item implements Usable {
+    private int amplifier;
+
+    public Potion(String itemId, int amplifier) {
+        super(itemId);
+        this.amplifier = amplifier;
+    }
+
+    public int getAmplifier() {
+        return amplifier;
+    }
+
+    @Override
+    public abstract void use(Player target);
+}
+```
+重点看类声明;
+```Java
+public abstract class Potion extends Item implements Usable
+```
+它表达三个信息：
+| 部分 | 含义 |
+|---|---|
+| `abstract class Potion` | 药水是抽象类 |
+| `extends Item` | 药水是一种物品 |
+| `implements Usable` | 药水具有接口约定的可使用能力 |
+
+恢复药水仍然可以写：
+```Java
+public class HealPotion extends Potion {
+    public HealPotion(String itemId, int amplifier) {
+        super(itemId, amplifier);
+    }
+
+    @Override
+    public void use(Player target) {
+        target.restoreHitPoint(getAmplifier());
+    }
+}
+```
+它通过继承 `Potion`，也具有 `Usable` 能力。
+
+相比于抽象类及继承，接口的关注点在于**可使用能力**的约定，它不需要关心具体数据及是心啊方法。
+
+而且，如果玩家除了背包，手中还有东西(比如食物），在判断手中东西是否能用时，也可以实现`Usable`，不必为了获得“可使用能力”就继承`Potion`。
+
+另外，一个类只能继承一个父类，而一个类可以实现多个接口。它可以在保留自身继承关系的同时，声明自己具有多种能力。比如，恢复药水只能用在己方阵营中，而伤害药水只能用于敌方阵营，此时我们可以再添加两个接口。
+
+
+### 3 问题：背包里取出的是`Item`
+现在我们每个玩家都有一个背包，而背包里装的都是`Item`。
+
+假设：
+```Java
+ArrayList<Item> items = new ArrayList<>();
+
+items.add(new HealPotion("heal1", 5));
+items.add(new Equipment("sword1", 100));
+```
+这里假设装备类的构造方法接收ID和耐久度，并且 `Equipment` 没有实现 `Usable`。
+
+此时我们取出一个物品：
+```Java
+Item item = items.get(0);
+```
+虽然它实际上是恢复药水，但直接写`item.use(target);`仍然会编译失败。
+
+因为`Item`中没有提供`use`方法。
+
+但首先，我们需要先判断这个`Item`是`Potion`还是`Equipment`，也就是说，我们先要判断这个`Item`能否使用。为了实现这一功能，我们需要`instanceof`。
+
+### 4 `instanceof`：检查对象能否被视为某种类型
+写法：
+```Java
+item instanceof Usable
+```
+它返回一个`boolean`。
+
+例如：
+```Java
+Item first = new HealPotion("heal1", 5);
+Item second = new Equipment("sword1", 100);
+
+System.out.println(first instanceof Usable);  // true
+System.out.println(second instanceof Usable); // false
+```
+判断的是对象的实际类型是否符合目标类型，而不是只看变量声明。
+
+因此，即使变量声明为 `Item`，恢复药水仍然会得到 `true`。
+
+但`instanceof`并不是绑死在接口上，它同样可以用于检查类关系：
+```Java
+System.out.println(first instanceof Item);       // true
+System.out.println(first instanceof Potion);     // true
+System.out.println(first instanceof HealPotion); // true
+```
+如果对`null`使用，则会返回`false`。
+
+### 4 强制类型转换
+检查通过之后，可以进行转换：
+```Java
+if (item instanceof Usable) {
+    Usable usable = (Usable) item;
+    usable.use(target);
+}
+```
+最关键的一行是`Usable usable = (Usable) item;`。现在多了一个`Usable`类型的引用变量，允许调用接口规定的方法。
+
+如果不检查就进行强制转换会发生什么呢？
+
+假设我们有一个：
+```Java
+Item item = new Equipment("sword1", 100);
+```
+刚刚说过，`Equipment`无法进行使用，没有`Usable`，如果直接执行：
+```Java
+Usable usable = (Usable) item;
+```
+运行时会抛出：`ClassCastException`，即类型转换异常。
+
+在Java中，强制转换不意味着“不管原来时什么，都把它变成我指定的类型”，它要求实际对象本来就符合目标类型。
+
+因此，对于可能包含不同物品的背包，应该先检查：
+```Java
+if (item instanceof Usable) {
+    Usable usable = (Usable) item;
+    usable.use(target);
+} else {
+    // 根据要求进行处理
+}
+```
+
+那么，这时候我们就想，为什么还要进行强制转换呢？不用不行吗？
+来看：
+```Java
+Item item = new HealPotion("heal1", 5);
+
+if (item instanceof Usable) {
+    item.use(target); // 编译错误
+}
+```
+问题是，`Item`类中，并没有声明`use`（`use`是`Potion`中的抽象方法哦），因此编译器无法通过。
+
+在强制类型转换后，创建了一个新的引用变量：`Usable usable`。而`Usable`中声明了`void use(Player target;`，因此允许调用。当然我们也可以强制转换为`Potion`，如果你确定一定是药水而非其它可用类。
+
+总结一下，`item instanceof Usable`回答“有没有这种使用能力”，而`usable.use(target)`负责“执行这种能力”。
+
+## 九、分身vs克隆
+在第四次作业中，我们主要探讨了深复制与浅复制。
+
+以作业题为例。魔法世界中有魔法书架和魔法书，书架可以进行复制，复制之后，原书架爱和副本应该能够独立修改。
+
+但“复制”很容易只做了一半：
+- 看起来有两个书架，实际上共用一个书籍列表。
+- 列表已经分开了，里面的书却还是同一批对象。
+
+这一部分我们要学会沿着引用逐层检查：**哪些对象是新的，哪些对象仍然共享**。
+
+### 1 先从一本书开始
+书有名字和魔咒：
+```Java
+public class Book {
+    private String name;
+    private String magic;
+
+    public Book(String name, String magic) {
+        this.name = name;
+        this.magic = magic;
+    }
+
+    public void appendMagic(String suffix) {
+        magic = magic + suffix;
+    }
+
+    public boolean containsMagic(String text) {
+        return magic.contains(text);
+    }
+
+    public Book copy() {
+        return new Book(name, magic);
+    }
+}
+```
+其中：
+```Java
+magic.contains(text)
+```
+负责检查魔咒是否包含指定文本，并返回`boolean`。
+
+例如：
+```Java
+Book book = new Book("BookA", "#123#");
+
+System.out.println(book.containsMagic("123")); // true
+```
+
+### 2 引用赋值
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = first;
+```
+此时`first`和`second`都指向同一个`Book`对象。
+
+执行：
+```Java
+second.appendMagic("_new");
+```
+再检查：
+```Java
+System.out.println(first.containsMagic("_new"));  // true
+System.out.println(second.containsMagic("_new")); // true
+```
+因为修改的是同一本书。
+
+也就是说，`Book second = first;`是引用赋值，并没有赋值书对象。
+
+### 3 创建新书：数据相同，对象独立
+改成：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = new Book("BookA", "#123#");
+```
+这我不用多说，读者也能明白吧！`first`和`second`指向的是两本不同的书，只是书的数据是一样的。这时候我们修改一个的值并不会影响另一个。
+
+同样我们可以执行：
+```Java
+Book second = first.copy();
+```
+因为`copy()`内部执行了：
+```Java
+return new Book(name, magic);
+```
+
+那如果写成：
+```Java
+public Book copy() {
+    return this;
+}
+```
+返回的仍然是原对象，跟上一节中的引用赋值是一样的。
+
+### 4 列表也有两层
+现在有一个书籍列表：
+```Java
+ArrayList<Book> first = new ArrayList<>();
+
+first.add(new Book("BookA", "#123#"));
+```
+注意这里至少有两个对象：
+1. `ArrayList` 对象。
+2. `Book` 对象。
+如果执行：
+```Java
+ArrayList<Book> second = first;
+```
+两个变量引用的是同一个列表。
+
+所以：
+```Java
+second.clear();
+```
+清空列表后：
+```Java
+System.out.println(first.size()); // 0
+```
+通过 `first` 看到的也已经是空列表。
+
+这仍然只是引用赋值，连列表对象都没有复制。
+
+### 5 新建列表，但没有复制书（浅复制）
+Java 可以这样创建列表：
+```Java
+ArrayList<Book> second = new ArrayList<>(first);
+```
+这里把现有集合交给构造方法，创建一个包含相同元素的新列表。
+
+但对于 `Book` 这样的引用类型，复制过去的是元素保存的引用：
+```
+first  → 列表 A ──┐
+                  ├──→ 同一个 Book 对象
+second → 列表 B ──┘
+```
+这时：
+```Java
+first == second
+```
+是 `false`，因为列表不同。
+
+但：
+```Java
+first.get(0) == second.get(0)
+```
+是 `true`，因为里面引用的是同一本书。
+
+观察两种操作。
+
+先修改书：
+```Java
+second.get(0).appendMagic("_new");
+
+System.out.println(
+    first.get(0).containsMagic("_new")
+); // true
+```
+修改会相互影响，因为书仍然共享。
+
+再清空副本列表：
+```Java
+second.clear();
+
+System.out.println(first.size());  // 1
+System.out.println(second.size()); // 0
+```
+清空不会相互影响，因为列表已经分开。
+
+这就是典型的浅复制：当前这一层创建了新对象，但其中的引用仍然指向原来的内部对象。
+
+这有点像电子小说。我们每个人都拥有自己的书架，然而书架里的书是一样的，如果作者进行了更新和修文，那么我们书架中的书也会进行更新。
+
+### 6 深复制：把需要独立修改的内部对象也复制出来
+如果要求列表和书都独立，可以写：
+```Java
+ArrayList<Book> second = new ArrayList<>();
+
+for (Book book : first) {
+    second.add(book.copy());
+}
+```
+关键区别在这里：
+```Java
+second.add(book.copy());
+```
+而不是：
+```Java
+second.add(book);
+```
+前者添加新书的引用，后者添加原书的引用。
+
+现在：
+```Java
+second.get(0).appendMagic("_new");
+```
+不会改变原来的书：
+```Java
+System.out.println(
+    first.get(0).containsMagic("_new")
+); // false
+```
+同时，清空副本列表，也不会影响原列表。
+
+对于这个例子，列表以及其中可变的书对象都被独立复制了，满足我们需要的深复制效果。
+
+### 7 书架代码示意
+那么，我们可以这样定义一个书架：
+```Java
+import java.util.ArrayList;
+
+public class BookShelf {
+    private int id;
+    private ArrayList<Book> books;
+
+    public BookShelf(int id) {
+        this.id = id;
+        this.books = new ArrayList<>();
+    }
+
+    // 其它方法
+
+    public BookShelf copy(int newId) {
+        BookShelf result = new BookShelf(newId);
+
+        for (Book book : books) {
+            result.addBook(book.copy());
+        }
+
+        return result;
+    }
+}
+```
+
+### 8 `final`究竟指的什么
+我突然想起来没有正式介绍过`final`，那么趁着这个机会，来详细说明一下。
+
+书架代码中有：
+```Java
+private final ArrayList<Book> books;
+```
+这里的 `final` 限制的是这个字段保存的引用：初始化完成后，不能让它改为引用另一个列表。
+
+因此：
+```Java
+books = new ArrayList<>(); // 已初始化后再次赋值，不允许
+```
+但仍然可以：
+```Java
+books.add(book);
+books.clear();
+```
+因为这些操作没有更换 `books` 保存的引用，只是在修改原列表的内容。
+
+也仍然可以：
+```Java
+books.get(0).appendMagic("_new");
+```
+修改里面的书。
+
+也就是说，它规定了字段保存的引用对象不变，而不代表不能对对象进行修改。
+
+所以，看到 `final` 字段时，不能据此判断内部对象已经不可变，更不能据此判断复制已经完成。
+
+## 十、到底是不是你
+上一部分，我们复制出两本独立的书：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = first.copy();
+```
+它们的数据相同，但不是同一个对象。
+
+现在要解决：程序怎样区分“同一个对象”和“内容相同的两个对象”？
+
+这与第四次作业中的书籍比较、合并去重直接相关，后面学习 `HashSet`、`HashMap` 时也会用到。
+
+### 1 `==`：是不是同一个对象
+先看：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = first;
+```
+两个变量指向同一个对象。
+
+所以：
+```Java
+System.out.println(first == second); // true
+```
+如果改为：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = new Book("BookA", "#123#");
+```
+此时创建了两个对象，因此：
+```Java
+System.out.println(first == second); // false
+```
+对引用类型而言，`==` 比较的是对象身份，不会逐个比较对象中的字段。
+
+对基本类型则不同：
+```Java
+int first = 10;
+int second = 10;
+
+System.out.println(first == second); // true
+```
+这里比较的是整数值。
+
+### 2 `equals`：什么算作“内容相同”
+如果我们规定：
+> 两本书的名字和魔咒都相同，则认为它们内容相等。
+
+那么我们希望：
+```Java
+Book first = new Book("BookA", "#123#");
+Book second = new Book("BookA", "#123#");
+
+System.out.println(first.equals(second)); // 希望为 true
+```
+但Java不会自动猜测应该比较哪些字段。
+
+如果 `Book` 没有重写 `equals`（还记得重写是什么吗😉），继承来的默认实现仍然按对象身份比较。上面两个独立对象得到的结果仍是 `false`。
+
+为什么没有定义 `equals` 也能调用？
+
+因为Java中的类最终都继承自 `Object`，而 `Object` 提供了：
+```Java
+public boolean equals(Object obj)
+```
+我们需要在 `Book` 中重写它，定义书籍自己的相等规则。
