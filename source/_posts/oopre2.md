@@ -111,95 +111,93 @@ public Item(String itemId) {
 好吧，话说回来，我只能凭借印象继续写下去，而且由于过于悲伤，可能会写的有点简略，不过在全书完结后会修文的，大家放心食用！
 
 假设误写：
+```Java
 public Potion(String itemId, int amplifier) {
     this.amplifier = amplifier;
 }
+```
 没有显式调用父类构造方法时，编译器会尝试调用父类的无参构造方法：
+```Java
 super();
-但我们的 Item 只有：
+```
+但我们的 `Item` 只有：
+```Java
 public Item(String itemId) {
     this.itemId = itemId;
 }
+```
 并没有：
+```Java
 public Item() {
 }
+```
 所以会编译失败。
 
 编译器不会根据参数名相同，就自动替你写：
+```Java
 super(itemId);
+```
 你需要明确告诉它，父类构造需要什么参数。
 
-这也引出一个容易记错的规则：
-一个类完全没有声明构造方法时，编译器才会为它提供默认的无参构造方法。
+这也引出一个规则：
+> 一个类完全没有声明构造方法时，编译器才会为它提供默认的无参构造方法。
 
-例如：
-public class Example {
-}
-可以：
-Example example = new Example();
-但如果已经声明：
-public class Example {
-    public Example(int value) {
-    }
-}
-那么：
-new Example();
-就不能使用，因为没有可匹配的无参构造方法。需要传参数：
-new Example(10);
-或者自己再定义一个无参构造方法。
-
-七、构造方法不会被子类继承
-
+### 5 构造方法不会被子类继承
 父类中有：
+```Java
 public Item(String itemId) {
     this.itemId = itemId;
 }
-不代表 Potion 自动获得一个：
+```
+不代表 `Potion `自动获得一个：
+```Java
 public Potion(String itemId)
+```
 构造方法。
 
 我们现在定义的 Potion 构造方法是：
+```Java
 public Potion(String itemId, int amplifier)
+```
 所以需要这样创建：
+```Java
 new Potion("heal1", 50);
+```
 而不能这样：
+```Java
 new Potion("heal1"); // 没有对应的 Potion 构造方法
+```
 区别要记清：
 - 父类的合适实例方法，可以被子类继承使用。
 - 构造方法不会被继承，需要在各自类中定义。
 - 子类构造时，可以通过 super(...) 调用父类构造方法。
-八、父类字段是 private，子类能直接用吗
 
+### 6 父类字段是 `private`，子类能直接用吗
 我们的父类中：
+```Java
 private String itemId;
-因此，在 Potion 中直接写：
+```
+因此，在 `Potion` 中直接写：
+```Java
 public void printId() {
     System.out.println(itemId); // 编译错误
 }
-是不允许的。
-
-原因是 itemId 是 Item 的私有字段，子类代码不能直接访问。
+```
+原因是 `itemId` 是 `Item` 的私有字段，子类代码不能直接访问。
 
 但可以使用父类提供的公开方法：
+```Java
 public void printId() {
     System.out.println(getItemId());
 }
-这里发生的是：
-Potion 的方法调用 getItemId()
-        ↓
-执行 Item 中定义的 getItemId()
-        ↓
-Item 自己的方法读取自己的私有字段
-        ↓
-返回结果
+```
+
 所以要区分：
-子类对象包含父类定义的私有状态，但子类代码没有直接访问这些私有字段的权限。
+> 子类对象包含父类定义的私有状态，但子类代码没有直接访问这些私有字段的权限。
 
-不需要为了让子类方便，就把所有字段改成 public 或 protected。
+不需要为了让子类方便，就把所有字段改成 `public` 。
 
-先保持字段私有，再提供确实需要的方法，通常更容易维护规则。
-
-九、不要在子类里再声明一份同名字段
+### 7 不要在子类里再声明一份同名字段
 
 有时看到不能访问父类的 itemId，可能会这样“修复”：
 public class Potion extends Item {
