@@ -77,6 +77,227 @@ HashMap<String, Item> items = new HashMap<>();
 
 在所举的例子中，键 `key`是物品 ID，例如 "heal1"，而值 `value`则对应的 `Item` 对象引用。
 
+添加两件物品：
+```Java
+items.put("heal1", new HealPotion("heal1", 5));
+items.put("damage1", new DamagePotion("damage1", 6));
+```
+关系是：
+```
+items
+├── "heal1"   → HealPotion 对象
+└── "damage1" → DamagePotion 对象
+put 表示保存这个键值对应关系。
+```
+
+也可以先创建对象：
+```Java
+Item potion = new HealPotion("heal1", 5);
+
+items.put(potion.getItemId(), potion);
+```
+与列表一样，保存的是对象引用，不会因此复制出第二件物品。
+
+### 5 根据键查找：`get`
+```Java
+Item found = items.get("heal1");
+```
+返回对应的值：“heal1”→HealPotion对象。
+
+但如果没有这个键：
+```Java
+Item missing = items.get("unknown");
+```
+由于没有对象的键是`"unknown"`，那么会得到`null`。
+
+但也有可能表示“这个键对应的值就是`null`”，注意区分哦~
+
+### 6    检查、删除和数量
+检查键是否存在：
+```Java
+boolean exists = items.containsKey("heal1");
+```
+删除某个键及其映射：
+```Java
+Item removed = items.remove("heal1");
+```
+`remove` 返回原来对应的值。
+
+获取键值对数量：
+```Java
+int count = items.size();
+```
+整理成表：
+| 操作 | 含义 |
+|---|---|
+| `put(key, value)` | 添加或更新映射 |
+| `get(key)` | 根据键取值 |
+| `containsKey(key)` | 判断键是否存在 |
+| `remove(key)` | 删除该键对应的映射 |
+| `size()` | 当前映射数量 |
+| `clear()` | 清空全部映射 |
+
+### 7 相同的键再次`put`，会替换值
+`HashMap`中，一个键最多对应一个值。
+
+`HashMap`中，一个键最多对应一个值。
+
+```Java
+HashMap<String, Integer> scores = new HashMap<>();
+
+scores.put("Alice", 10);
+scores.put("Alice", 20);
+```
+最后：
+```Java
+System.out.println(scores.size());       // 1
+System.out.println(scores.get("Alice")); // 20
+```
+从这我们可以看出，`HashMap`不允许重复键出现。
+
+另外，注意`HashMap`的定义应该用泛型类型参数`Integer`。
+
+### 8 `HashSet`
+`HashSet`只记录有哪些元素，但不保存键值对应。
+
+例如，统计当前有哪些物品类型：
+```Java
+import java.util.HashSet;
+
+\\其它
+
+HashSet<String> types = new HashSet<>();
+
+types.add("HealPotion");
+types.add("HealPotion");
+types.add("DamagePotion");
+
+System.out.println(types.size()); // 2
+```
+常用指令：
+| 操作 | 含义 |
+|---|---|
+| `add(element)` | 添加元素 |
+| `contains(element)` | 判断元素是否存在 |
+| `remove(element)` | 删除元素 |
+| `size()` | 元素数量 |
+| `clear()` | 清空集合 |
+
+`add`还有一个`boolean`：
+```Java
+System.out.println(types.add("StrengthPotion")); // true
+System.out.println(types.add("StrengthPotion")); // false
+```
+第一次新增成功，第二次由于已经存在不再新增。
+
+与`HashMap`一样，它也不保证插入顺序。
+
+### 9 `HashSet`如何判断重复
+如果元素是字符串：
+```Java
+HashSet<String> names = new HashSet<>();
+
+names.add(new String("Alice"));
+names.add(new String("Alice"));
+
+System.out.println(names.size()); // 1
+```
+两个字符串对象不同，但内容相等。字符串正确实现了 `equals` 和 `hashCode`，因此会被视为重复元素。
+
+如果元素是自定义的书：
+```Java
+HashSet<Book> books = new HashSet<>();
+
+books.add(new Book("BookA", "#123#"));
+books.add(new Book("BookA", "#123#"));
+```
+我们希望得到几本，取决于书籍的相等规则。
+
+如果规定“名字和魔咒相同就相等”，就应在 `Book` 中配套实现：
+```Java
+@Override
+public boolean equals(Object obj) {
+    if (this == obj) {
+        return true;
+    }
+
+    if (!(obj instanceof Book)) {
+        return false;
+    }
+
+    Book other = (Book) obj;
+
+    return Objects.equals(name, other.name)
+        && Objects.equals(magic, other.magic);
+}
+@Override
+public int hashCode() {
+    return Objects.hash(name, magic);
+}
+```
+并引入：
+```Java
+import java.util.Objects;
+```
+这里：
+```Java
+Objects.hash(name, magic)
+```
+是利用两个字段计算一个哈希值，不是生成唯一编号。
+
+正确配套后，上面的集合大小为1。
+
+如果只重写 `equals`，没有配套重写 `hashCode`，就破坏了相等对象必须具有相同哈希值的约定，集合的去重和查找可能不符合预期。
+
+### 10 可变对象要特别小心
+假设：
+```Java
+Book book = new Book("BookA", "#123#");
+
+HashSet<Book> books = new HashSet<>();
+books.add(book);
+```
+加入时，集合根据当时的哈希信息组织存储。之后：
+```Java
+book.appendMagic("_new");
+```
+`magic`变了，而它参与了：
+```Java
+Objects.hash(name, magic)
+```
+哈希值可能随之变化。
+然而集合不会因为对象内部变化，就自动重新计算哈希值并重新安置。因此，再次操作：
+```Java
+books.contains(book)
+```
+或其它操作就有可能出现意外结果。
+
+所以如果想要进行修改，建议先从`HashSet`中删除，然后重新加入。
+
+而对于：
+```Java
+HashMap<String, Item> items;
+```
+情况不同。因为这里用来计算查找位置的是字符串键，而不是物品值。
+
+因此，改变物品的效果等对象的状态，并不会让字符串键的哈希位置因此失效。当然，如果你修改了物品ID，那么同样也会发生上述的错误。
+
+因此，在使用哈希时，应尽量选择不变值（除了加入删除）作为键。
+
+### 11 `ArrayList`与`HashMap`、`HashSet`的选择
+在后面的作业中，我们会遇到槽位编号与物品ID同时存在的情况。他们回答不同问题：槽位编号负责回答“物品放在那里”，而物品ID则用于回答“这是哪件物品”。
+
+对于三者来说，我们可以根据需求进行选择：
+| 需求 | 优先考虑 |
+|---|---|
+| 按位置访问、保留排列顺序 | 数组、`ArrayList` |
+| 根据唯一 ID 查对象 | `HashMap` |
+| 去重、判断某元素是否存在 | `HashSet` |
+| 固定编号的槽位，允许中间为空 | 数组通常很直接 |
+
+
+
+
 
 
 
