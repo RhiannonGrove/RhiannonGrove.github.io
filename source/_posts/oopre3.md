@@ -5,7 +5,7 @@ tags:
    - oopre
 ---
 
-## 十一，背包查户口
+## 十一、背包查户口
 这一部分我们将学习有关哈希的部分，`hashCode`、`HashMap`、`HashSet`。
 
 我们想要实现：
@@ -295,17 +295,342 @@ HashMap<String, Item> items;
 | 去重、判断某元素是否存在 | `HashSet` |
 | 固定编号的槽位，允许中间为空 | 数组通常很直接 |
 
+## 十二、bug追踪
+前面我们已经了解了空指针、类型转换和对象共享等问题，这一部分我们主要用于处理第四次作业中的常见错误（我的作业🥲）。
 
+### 1 `substring`：含左不含右
+```Java
+String result = text.substring(1, 3);
+```
+结果是：`12`。因为它使用左闭右开区间：`[1,3)`。例如：
+```Java
+String text = "012345";
 
+System.out.println(text.substring(0, 2)); // 01
+System.out.println(text.substring(2, 5)); // 234
+System.out.println(text.substring(0, 6)); // 012345
+```
+因此第二个参数可以等于字符串长度。所以：
+```Java
+text.charAt(6);      // 越界
+text.substring(0, 6); // 合法
+```
 
+### 2 正序删除需格外注意
+加入列表中有：
+```
+下标：  0  1  2
+元素：  1  2  8
+```
+而我们的目标是删除所有小于5的数字。第一版写法是：
+```Java
+for (int i = 0; i < numbers.size(); i++) {
+    if (numbers.get(i) < 5) {
+        numbers.remove(i);
+    }
+}
+```
+还记得之前说过什么吗？在Java中列表会自动向前部位，因此在第一轮循环后，列表变成：
+```Java
+下标：  0  1
+元素：  2  8
+```
+下一步`i++`就会漏掉下标为0的2。
 
+知道了问题所在，那么解决方法就比较容易想到了。
 
+第一种解决方法是倒序删除：
+```Java
+for (int i = numbers.size() - 1; i >= 0; i--) {
+    if (numbers.get(i) < 5) {
+        numbers.remove(i);
+    }
+}
+```
+这样顶多会增加一点循环次数，但可以保证正确性。
 
+第二种方法是正序删除后不增加下标：
+```Java
+int i = 0;
 
+while (i < numbers.size()) {
+    if (numbers.get(i) < 5) {
+        numbers.remove(i);
+    } else {
+        i++;
+    }
+}
+```
+我个人比较喜欢这种方法。
 
+### 3 JML：写明“应该做什么”
+第四次作业有一些这样的注释：
+```Java
+/*@
+  @ requires suffix != null;
+  @ ensures this.magic.equals(\old(this.magic).concat(suffix));
+  @ assignable this.magic;
+  @*/
+public void appendMagic(String suffix) {
+    magic = magic.concat(suffix);
+}
+```
+这叫**JML**，即Java Modeling Language，用于描述方法的规格或契约。不过不用担心，我们目前不需要掌握，只需要认识几个词：
+| 写法 | 含义 |
+|---|---|
+| `requires` | 调用前需要满足的条件 |
+| `ensures` | 方法正常结束后应满足的条件 |
+| `assignable` | 允许修改哪些状态 |
+| `\result` | 方法返回值 |
+| `\old(...)` | 表达式在方法执行前的值 |
 
+普通 Java 编译器会把这些当作注释，不会因为程序中写了规格，就自动实现或检查这些要求。专门的 JML 工具才能进一步处理它们。（而我们作业程序中也不会出现）
 
+## 十三、装备生产线
+之前我们只有药水一个类需要操心，现在我们有：头盔、胸甲、护腿、靴子，以及玩家手中的剑。当我们输入`Helmet`或者`Sword`时，程序需要真正创建：`new Helmet(...)`、`new Sword(...)`等等等等。
 
+这一部分，我们将来学习怎样把“根据类型创建对象”集中管理，以及**简单工厂、工厂方法、抽象工厂**分别是什么。
+
+### 1 先不用工厂，直接创建
+假设已经从输入中读到了：
+```Java
+String type = "Helmet";
+String id = "helmet1";
+int value = 5;
+int durability = 100;
+```
+你可以直接判断：
+```Java
+Equipment equipment;
+
+if ("Helmet".equals(type)) {
+    equipment = new Helmet(id, value, durability);
+} else if ("Sword".equals(type)) {
+    equipment = new Sword(id, value, durability);
+} else {
+    equipment = null;
+}
+```
+这完全可以，这其实就是将具体子类对象统一保存到父类引用中（前提是你已经写完了子类和父类🤭）。
+
+问题在于：如果多处都需要创建设备，就很可能不断重复这套分支。一旦增加装备类型，就需要四处修改。
+
+为了避免我们的代码越写越长，我们可以吧这项工作提取到专门的位置。
+
+### 2 简单工厂：把创建逻辑集中起来
+例如：
+```Java
+public class EquipmentFactory {
+    public static Equipment create(
+            String type, String id, int value, int durability) {
+
+        if ("Helmet".equals(type)) {
+            return new Helmet(id, value, durability);
+        } else if ("Chestplate".equals(type)) {
+            return new Chestplate(id, value, durability);
+        } else if ("Leggings".equals(type)) {
+            return new Leggings(id, value, durability);
+        } else if ("Boots".equals(type)) {
+            return new Boots(id, value, durability);
+        } else if ("Sword".equals(type)) {
+            return new Sword(id, value, durability);
+        } else {
+            return null;
+        }
+    }
+}
+```
+外部调用时：
+```Java
+Equipment equipment =
+    EquipmentFactory.create(type, id, value, durability);
+```
+这样，调用者只需要提供参数，而工厂负责选择具体类并创建对象。
+
+这被称为“简单工厂”。
+
+### 3 逐步读懂
+先看声明：
+```Java
+public static Equipment create(
+        String type, String id, int value, int durability)
+```
+| 部分 | 含义 |
+|---|---|
+| `public` | 外部可以调用 |
+| `static` | 可以通过类名调用 |
+| `Equipment` | 返回装备对象的引用 |
+| `create` | 自己起的方法名 |
+| 参数列表 | 创建对象所需的信息 |
+
+这里因为使用了`static`因此我们不需要先创建对象，就可以直接写：
+```Java
+EquipmentFactory.create(...);
+```
+而不需要写：
+```Java
+EquipmentFactory factory = new EquipmentFactory();
+```
+再看方法内部：
+```Java
+return new Helmet(id,value,durability);
+```
+完成两件事情：调用`Helmet`构造方法创建对象，返回该对象的引用。
+
+虽然方法声明返回`Equipment`，但返回`Helmet`对象是合法的，因为头盔是一种装备。
+
+**工厂没有取代构造方法，它只是替调用者选择并调用构造方法。**
+
+## 4 创建对象与使用对象
+创建时，需要根据字符串选择：
+```Java
+Potion potion;
+
+if ("HealPotion".equals(type)) {
+    potion = new HealPotion(id, amplifier);
+} else if ("DamagePotion".equals(type)) {
+    potion = new DamagePotion(id, amplifier);
+} else {
+    potion = null;
+}
+```
+创建之后，如果是有效药水对象，使用时可以：
+```Java
+potion.use(target);
+```
+不必每次使用时，重新按字符串判断。
+
+两种机制负责不同阶段：工厂负责决定创建什么对象；多态决定调用时执行什么行为。
+
+### 5 工厂一般不负责整条游戏指令
+假设处理添加装备指令，通常包含：解析输入、找到玩家并检查是否存活、创建指定装备、尝试放入背包、输出 这积分阶段，而工厂主要负责“创建指定设备”部分。
+
+它通常不需要知道玩家是否死亡、背包是否满了、应放入哪个槽位、应该输出什么等等问题，只是根据输入进行创建就可，嗯！
+
+### 6 工厂方法：让不同工厂决定创建什么
+简单工厂的核心是：一个工厂，根据参数选择不同产品。
+
+指导书还介绍了工厂方法模式。下面按它采用的接口形式展示：
+```
+统一的工厂接口
+├── 头盔工厂
+└── 剑工厂
+```
+先定义接口（还记得接口是什么吗）：
+```Java
+public interface EquipmentCreator {
+    Equipment create(String id, int value, int durability);
+}
+```
+头盔工厂：
+```Java
+public class HelmetCreator implements EquipmentCreator {
+    @Override
+    public Equipment create(String id, int value, int durability) {
+        return new Helmet(id, value, durability);
+    }
+}
+```
+剑工厂：
+```Java
+public class SwordCreator implements EquipmentCreator {
+    @Override
+    public Equipment create(String id, int value, int durability) {
+        return new Sword(id, value, durability);
+    }
+}
+```
+调用：
+```Java
+EquipmentCreator creator = new HelmetCreator();
+
+Equipment equipment =
+    creator.create("helmet1", 5, 100);
+```
+如果换成：
+```Java
+EquipmentCreator creator = new SwordCreator();
+
+Equipment equipment =
+    creator.create("sword1", 8, 100);
+```
+创建的就是剑。
+
+这里又出现了熟悉的多态：
+```
+creator 的声明类型：EquipmentCreator
+creator 指向的实际对象：HelmetCreator 或 SwordCreator
+        ↓
+执行相应工厂的 create
+```
+注意，这里`creat`是实例方法，通过工厂对象调用。
+
+### 7 两种工厂区别
+| 比较 | 简单工厂 | 工厂方法的上述结构 |
+|---|---|---|
+| 谁决定具体产品 | 一个集中分支 | 各个具体工厂 |
+| 典型调用 | `EquipmentFactory.create(type, ...)` | `creator.create(...)` |
+| 增加新产品 | 通常修改分支 | 通常增加产品类和对应工厂 |
+| 代码数量 | 较少 | 较多 |
+
+目前，应该先理解两种结构，再结合实际复杂度使用。**工厂类越多，并不意味着设计一定越好。**
+
+### 8 抽象工厂：一个工厂创建一组相关产品
+指导书中出现了抽象工厂
+
+它关注的不只是创建一种产品，而是创建一组相互配套的产品。
+
+例如：mc中铁质工具有铁斧、铁镐、铁剑等等，而钻石工具有钻石镐、钻石斧等等。
+
+共同接口可以有多个创建方法：
+```Java
+public interface EquipmentSetFactory {
+    Helmet createHelmet(String id, int value, int durability);
+
+    Sword createSword(String id, int value, int durability);
+}
+```
+哦对，这里会不会产生疑惑？为什么明明是抽象工厂却没有`abstract`？反正我当时有大大的疑惑！
+
+因为接口中，这种没有方法体的普通实例方法默认就是`public abstract`，可以省略。
+
+所以：
+```Java
+public interface EquipmentSetFactory {
+    Helmet createHelmet(String id, int value, int durability);
+}
+```
+等价于：
+```Java
+public interface EquipmentSetFactory {
+    public abstract Helmet createHelmet(
+        String id, int value, int durability);
+}
+```
+Java已经隐含了这些显式符。
+
+对比抽象类中的声明，则需要显式写`abstract`：
+```Java
+public abstract class EquipmentFactory {
+    public abstract Helmet createHelmet(
+        String id, int value, int durability);
+}
+```
+另外，实现接口时，对应方法必须是`public`：
+```Java
+@Override
+public Helmet createHelmet(String id, int value, int durability) {
+    return new Helmet(id, value, durability);
+}
+```
+总之，不同具体工厂提供对应系列的实现。
+
+三种工厂可以这样区分：
+| 名称 | 主要思路 |
+|---|---|
+| 简单工厂 | 根据参数，在一个入口中选择具体产品 |
+| 工厂方法 | 通过具体工厂决定创建哪种产品 |
+| 抽象工厂 | 通过一个工厂创建一组相关产品 |
 
 
 
