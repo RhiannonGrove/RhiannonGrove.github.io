@@ -632,8 +632,183 @@ public Helmet createHelmet(String id, int value, int durability) {
 | 工厂方法 | 通过具体工厂决定创建哪种产品 |
 | 抽象工厂 | 通过一个工厂创建一组相关产品 |
 
+## 十四、好友救援队
+这一次作业同时涉及模式和图遍历，因此分上下两个部分。
 
+在这一部分我们来了解一下观察者模式和救援事件的触发条件
 
+### 1 观察者模式：通知关心ta的人
 
+先看一个熟悉的场景：你在某站上关注了一个频道，当该频道有更新时，就会通知已关注的用户。
 
+里面有两种角色：被观察者和观察者。被观察者负责保存关注者，在事件发生时发出通知，而观察者则接收通知，并执行自己的响应（例如短信通知、弹窗提醒等等）。
 
+“观察者”并不是程序里不断盯着某个变量。我们要显式编写代码，在合适的时机调用它的方法。这也是一种对象之间协作的方式。
+
+### 2 先定义接收通知的接口
+先建立一个简单接口：
+```Java
+public interface Viewer {
+    void onUpdate(String title);
+}
+```
+约定：能接受频道更新通知的对象，必须提供`onUpdate`方法。`title`是新内容的标题。
+
+再写一个具体的观众类：
+```Java
+public class Reader implements Viewer {
+    private String name;
+
+    public Reader(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void onUpdate(String title) {
+        System.out.println(name + " 收到更新：" + title);
+    }
+}
+```
+实际项目中的响应不一定是打印，也可能是更新界面、处理业务数据，或者作业中的执行一次援助。
+
+### 3 让频道保存观察者，并发出通知
+```Java
+import java.util.ArrayList;
+
+public class Channel {
+    private ArrayList<Viewer> viewers = new ArrayList<>();
+
+    public void addViewer(Viewer viewer) {
+        viewers.add(viewer);
+    }
+
+    public void removeViewer(Viewer viewer) {
+        viewers.remove(viewer);
+    }
+
+    public void publish(String title) {
+        for (Viewer viewer : viewers) {
+            viewer.onUpdate(title);
+        }
+    }
+}
+```
+先看列表：
+```Java
+private ArrayList<Viewer> viewers = new ArrayList<>();
+```
+它保存的是接口类型的引用。只要对象实现了 `Viewer`，就可以放进来。
+
+添加关注：
+```Java
+public void addViewer(Viewer viewer) {
+    viewers.add(viewer);
+}
+```
+保存观察者的引用，之后就能够找到它并调用方法。
+
+发布内容：
+```Java
+public void publish(String title) {
+    for (Viewer viewer : viewers) {
+        viewer.onUpdate(title);
+    }
+}
+```
+这段循环就是通知过程。
+
+频道不需要知道每个对象具体是什么类，只需要知道它符合`Viewer`的约定。
+
+调用：
+```Java
+viewer.onUpdate(title);
+```
+时，再根据实际对象执行相应实现。这正是接口与多态的用途。
+
+### 4 完整调用展示
+在入口方法中：
+```Java
+Channel channel = new Channel();
+
+Reader alice = new Reader("Alice");
+Reader bob = new Reader("Bob");
+
+channel.addViewer(alice);
+channel.addViewer(bob);
+
+channel.publish("Java 背包整理指南");
+```
+输出：
+```
+Alice 收到更新：Java 背包整理指南
+Bob 收到更新：Java 背包整理指南
+```
+
+### 5 回到作业中
+
+作业里的流程可以理解为：
+```
+玩家受到伤害
+        ↓
+体力发生变化
+        ↓
+检查是否满足援助触发条件
+        ↓
+找到能够援助这个玩家的人
+        ↓
+这些玩家依次尝试援助
+```
+但是，频道示例只有直接关注，作业还允许间接关系：Alice → Bob → Carol
+
+箭头表示左边的玩家关注右边的玩家。于是：
+- Alice 可以援助 Bob。
+- Bob 可以援助 Carol。
+- Alice 也可以沿关注链援助 Carol。
+
+这个关系有方向，所以Bob不能援助 Alice。
+
+## 十五、救援路线图
+上一部分我们说明了观察者模式的设定及调用方式，现在我们要解决三个问题：
+1. 哪些玩家能援助目标？
+2. 多条关注路径怎样避免重复处理？
+3. 找到人之后，怎样按题目顺序选择药水、执行援助？
+
+### 1 关注关系有方向
+
+还是上回的箭头：Alice → Bob → Carol
+
+当Carol触发援助时，应当沿着关注方向到达Carol，而不是沿着Carol关注的方向寻找能够救援她的人。
+
+因此我们可以反过来看箭头，变成Alice ← Bob ← Carol。
+
+这种做法时沿着反向关系遍历。
+
+再看一个复杂一点的例子：
+```
+Alice → Bob  → Carol
+Alice → Dave → Carol
+Carol → Bob
+```
+这里同时存在多条路径和循环。因此，不能仅仅沿着箭头走，否则可能重复处理，甚至陷入循环。
+
+### 2 先用名字保存关注关系
+可以用：
+```Java
+HashMap<String, HashSet<String>> following = new HashMap<>();
+```
+这个类型看起来有点长，拆开来看：键是玩家名，而值是这个玩家正在关注的所有玩家名。
+
+例如：
+```
+"Alice" → {"Bob", "Dave"}
+"Bob"   → {"Carol"}
+"Carol" → {"Bob"}
+"Dave"  → {"Carol"}
+```
+初始化每个玩家的空集合：
+```Java
+following.put("Alice", new HashSet<>());
+following.put("Bob", new HashSet<>());
+following.put("Carol", new HashSet<>());
+following.put("Dave", new HashSet<>());
+```
